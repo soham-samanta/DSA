@@ -22,7 +22,6 @@ public class Backtracking {
         int[]a = {1,2,3};
         permute(a,0,a.length-1);
 
-
     }
 
 

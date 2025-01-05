@@ -15,6 +15,7 @@ public class Recursion {
 //        System.out.println(findSubstrings("abc"));
         System.out.println(power(3,4));
         System.out.println(Math.pow(3,4));
+
     }
 
     public static boolean isPalindrome(String s) {

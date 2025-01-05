@@ -3,8 +3,11 @@ import java.util.*;
 public class Array {
     public static void main(String[] args) {
 
-        int[]arr = {7, 3, 2, 4, 9, 12, 56};
-        System.out.println(chocolateDistribution(arr,3));
+        int[]arr={1,2,3,4};
+        System.out.println(findPair(arr));
+
+//        int[]arr = {7, 3, 2, 4, 9, 12, 56};
+//        System.out.println(chocolateDistribution(arr,3));
 
 //        int[]arr={10, 19, 1, 30, 32};
 //        System.out.println(maxProfit2ptr(arr));
@@ -537,7 +540,7 @@ public class Array {
         return ans;
     }
 
-    public static String longestCommonPrefix(String[] arr) {
+    public static String longestCommonPrefix(String[] arr) { // imp
         if (arr == null || arr.length == 0) {
             return "";
         }
@@ -552,6 +555,92 @@ public class Array {
             }
         }
         return prefix;
+    }
+
+    // i/p: {2,8,7,1,5} --> o/p: [[2, 5], [7, 1]]
+    public static List<List<Integer>> findPair(int[] arr){
+        List<List<Integer>>ans=new ArrayList<>();
+        Set<Integer>set=new HashSet<>();
+
+        for(int e:arr){
+            set.add(e);
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i+1; j < arr.length; j++) {
+//                List<Integer>temp = new ArrayList<>();
+                if(set.contains(arr[i]+arr[j])){
+//                    temp.add(arr[i]);
+//                    temp.add(arr[j]);
+                    List<Integer> temp = new ArrayList<>(Arrays.asList(arr[i], arr[j]));
+                    ans.add(temp);
+                }
+            }
+        }
+//        ans.sort(Comparator.comparingInt((List<Integer> a) -> a.get(0)).thenComparingInt(a -> a.get(1)));
+        ans.sort((a, b) -> {
+            if (a.get(0).equals(b.get(0))) {
+                return a.get(1) - b.get(1);  // Sort by second element if first is equal
+            }
+            return a.get(0) - b.get(0);  // Sort by first element
+        });
+        return ans;
+    }
+
+    // i/p:1, 1, 1, 2, 2, 6, 8, 8, 8 (k=2)  --> o/p: 6 and 8 (true)
+    public boolean diffPossible(int[] arr, int k){
+        int i=0,j=1;
+        while(j<arr.length){
+            if(arr[j]-arr[i]==k && i!=j) return true;
+            else if(arr[j]-arr[i] < k) j++;
+            else i++;
+            // Ensure i != j
+            if (i == j) j++;
+        }
+        return false;
+    }
+
+    //i/p: [321, 123, 89, 32, 11] --> o/p: [123, 321]
+    public static List<Integer> find123Digits(int[] arr, int n){
+        List<Integer>ans=new ArrayList<>();
+        for(int e:arr){
+            if(contains123(e)){
+                ans.add(e);
+            }
+        }
+        Collections.sort(ans);
+        return ans;
+    }
+    private static boolean contain123(int n) {
+        String s = String.valueOf(n);
+        Set<Character>set=new HashSet<>();
+        for (char c : s.toCharArray()) {
+            set.add(c);
+        }
+        return set.contains('1') && set.contains('2') && set.contains('3');
+    }
+    private static boolean contains123(int num) {
+        boolean has1 = false, has2 = false, has3 = false;
+        // Check the digits of the number
+        while (num > 0) {
+            int digit = num % 10;
+            if (digit == 1) has1 = true;
+            if (digit == 2) has2 = true;
+            if (digit == 3) has3 = true;
+            num /= 10;
+            // Stop checking early if all digits are found
+            if (has1 && has2 && has3) return true;
+        }
+        return false;
+    }
+
+    public boolean isRectangleOverlap(int[] rec1, int[] rec2){
+        // Check if rec1 is to the left or right of rec2
+        if (rec1[2] <= rec2[0] || rec1[0] >= rec2[2]) return false;
+        // Check if rec1 is above or below rec2
+        if (rec1[3] <= rec2[1] || rec1[1] >= rec2[3]) return false;
+
+        return true; // Rectangles overlap
     }
 
 
