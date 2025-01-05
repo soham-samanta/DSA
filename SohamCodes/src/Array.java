@@ -1,9 +1,14 @@
-
-
 import java.util.*;
 
 public class Array {
     public static void main(String[] args) {
+
+        int[]arr = {7, 3, 2, 4, 9, 12, 56};
+        System.out.println(chocolateDistribution(arr,3));
+
+//        int[]arr={10, 19, 1, 30, 32};
+//        System.out.println(maxProfit2ptr(arr));
+
 //        int[]arr = {1,2,3,4,5};
 //        int[]b = {2,3};
 //
@@ -38,31 +43,31 @@ public class Array {
 //        int[]arr = {1,2,3,1,2,3};
 //        System.out.println(containsNearbyDuplicate(arr,2));
 
-        int[]arr={4,2,-1,-3,0,1,2,3};
+//        int[]arr={4,2,-1,-3,0,1,2,3};
 ////        System.out.println(twoSum(arr,4,0));
 //
-        Arrays.sort(arr);
-        List<List<Integer>>triplets=new ArrayList<>();
-        for (int i = 0; i < arr.length-2; i++) {
-            if(i>0 && arr[i]==arr[i-1]){
-                continue;
-            }
-            List<List<Integer>>temp = twoSum(arr,-arr[i],i+1);
-            for(List<Integer> e : temp){
-                e.addFirst(arr[i]); // put val in each list
-                triplets.add(e);
-            }
-        }
+//        Arrays.sort(arr);
+//        List<List<Integer>>triplets=new ArrayList<>();
+//        for (int i = 0; i < arr.length-2; i++) {
+//            if(i>0 && arr[i]==arr[i-1]){
+//                continue;
+//            }
+//            List<List<Integer>>temp = twoSum(arr,-arr[i],i+1);
+//            for(List<Integer> e : temp){
+//                e.addFirst(arr[i]); // put val in each list
+//                triplets.add(e);
+//            }
+//        }
+//
+//        System.out.println(triplets);
 
-        System.out.println(triplets);
-
-        int[][]arr2d={
-                {3,63,42},
-                {18,12,12},
-                {15,21,18},
-                {33,84,24}
-        };
-        minOperations(3,arr2d);
+//        int[][]arr2d={
+//                {3,63,42},
+//                {18,12,12},
+//                {15,21,18},
+//                {33,84,24}
+//        };
+//        minOperations(3,arr2d);
 
     }
 
@@ -487,18 +492,66 @@ public class Array {
         return maxTillNow;
     }
 
-    public int maxProfit2ptr(int[] arr){ // optimised -> O(n)
+    public static int maxProfit2ptr(int[] arr){ // optimised -> O(n)
         if (arr == null || arr.length < 2) return 0; // No profit can be made
 
-        int minPrice = Integer.MAX_VALUE; // To store the minimum price encountered so far
+        int minPrice = Integer.MAX_VALUE;
         int ans = 0; // To store the maximum profit
 
         for (int e : arr) {
             minPrice = Math.min(minPrice, e);
-            int profit = e - minPrice; // Calculate profit if sold at the current price
+            int profit = e - minPrice;
             ans = Math.max(ans, profit);
         }
         return ans; 
+    }
+
+    // 7, 3, 2, 4, 9, 12, 56
+    // 2, 3, 4, 7, 9, 12, 56
+    public static int chocolateDistribution(int[] arr, int m){
+        Arrays.sort(arr);
+        int i=0;
+        int j=m-1;
+        int minDiff = Integer.MAX_VALUE;
+        while(j<arr.length){
+            minDiff=Math.min(minDiff,arr[j]-arr[i]);
+            i++;j++;
+        }
+        return minDiff;
+    }
+
+    public static int distributeCandies(int[] arr) { // LeetCode Qs
+        int docAdvised = arr.length/2;
+        int ans = 0;
+
+        Set<Integer>set = new HashSet<>();
+        for(int e:arr){
+            set.add(e);
+        }
+        int uniqueCandy = set.size();
+
+        if(uniqueCandy==docAdvised) ans=uniqueCandy;
+        else if(uniqueCandy<docAdvised) ans=uniqueCandy;
+        else ans=docAdvised;
+
+        return ans;
+    }
+
+    public static String longestCommonPrefix(String[] arr) {
+        if (arr == null || arr.length == 0) {
+            return "";
+        }
+
+        String prefix = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            while (arr[i].indexOf(prefix) != 0) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                if (prefix.isEmpty()) {
+                    return "";
+                }
+            }
+        }
+        return prefix;
     }
 
 
