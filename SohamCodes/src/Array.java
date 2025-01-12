@@ -3,8 +3,18 @@ import java.util.*;
 public class Array {
     public static void main(String[] args) {
 
-        int[]arr={1,2,3,4};
-        System.out.println(findPair(arr));
+        ArrayList<Integer>a=new ArrayList<>(Arrays.asList(1, 3, 2, 4, 5));
+        System.out.println(subUnsort(a));
+
+//        int[]arr={3,4,-1,-2,1};
+//        System.out.println(firstMissingPositive(arr));
+
+
+//        int[]arr={1,2,1,3,6,5};
+//        findNumbers(arr);
+
+//        int[]arr={1,2,3,4};
+//        System.out.println(findPair(arr));
 
 //        int[]arr = {7, 3, 2, 4, 9, 12, 56};
 //        System.out.println(chocolateDistribution(arr,3));
@@ -331,10 +341,10 @@ public class Array {
 
 
 
-    static void Csort(int[] arr) {
+    public static void Csort(int[] arr) {
         int i = 0;
         while (i < arr.length) {
-            int correct = arr[i];
+            int correct = arr[i]-1; // -1 for (1->n)indexing / else (0 -> n-1)
             if (arr[i] != arr[correct]) {
                 swap(arr, i , correct);
             } else {
@@ -643,7 +653,223 @@ public class Array {
         return true; // Rectangles overlap
     }
 
+    public static Vector<Integer> findNumbers(int[] arr) {
+        Vector<Integer>ans=new Vector<>();
+        Csort(arr);
+        for (int i = 0; i < arr.length; i++) {
+            if(arr[i]!=i+1){
+                ans.add(i+1);
+                ans.add(arr[i]);
+            }
+        }
+        return ans;
+    }
 
+    public int maximumGap(int[] arr) {
+        if(arr.length<2) return 0;
+        Arrays.sort(arr);
+        int max= Integer.MIN_VALUE;
+        for(int i=1;i<arr.length;i++){
+            if(arr[i]-arr[i-1]>max){
+                max=Math.max(max,arr[i]-arr[i-1]);
+            }
+        }
+        return max;
+    }
+    public static int maximumGapBucket(int[] arr) {
+        if (arr.length < 2) return 0;
+
+        int n = arr.length;
+        int min = Arrays.stream(arr).min().getAsInt();
+        int max = Arrays.stream(arr).max().getAsInt();
+
+        if (min == max) return 0; // All elements are the same.
+
+        // Calculate bucket size and number of buckets
+        int bucketSize = Math.max(1, (max - min) / (n - 1));
+        int bucketCount = (max - min) / bucketSize + 1;
+
+        // Initialize buckets
+        int[][] buckets = new int[bucketCount][2];
+        for (int[] bucket : buckets) {
+            bucket[0] = Integer.MAX_VALUE; // min
+            bucket[1] = Integer.MIN_VALUE; // max
+        }
+
+        // Place each number in a bucket
+        for (int num : arr) {
+            int index = (num - min) / bucketSize;
+            buckets[index][0] = Math.min(buckets[index][0], num); // Update min
+            buckets[index][1] = Math.max(buckets[index][1], num); // Update max
+        }
+
+        // Calculate maximum gap
+        int maxGap = 0;
+        int previousMax = min;
+
+        for (int[] bucket : buckets) {
+            if (bucket[0] == Integer.MAX_VALUE) continue; // Empty bucket
+            maxGap = Math.max(maxGap, bucket[0] - previousMax);
+            previousMax = bucket[1];
+        }
+
+        return maxGap;
+    }
+
+    public static List<int[]> mergeIntervals(int[][] arr) {
+        // Step 1: Sort arr by start time
+        Arrays.sort(arr, (a, b) -> Integer.compare(a[0], b[0]));
+        List<int[]> ans = new ArrayList<>();
+        int n = ans.size();
+
+        // Step 2: Iterate and merge arr
+        for (int[] e : arr) {
+            // If the ans list is empty or there is no overlap, add the interval
+            if (ans.isEmpty() || ans.get(n-1)[1] < e[0]) {
+                ans.add(e);
+            } else {
+                // Merge the current interval with the last interval in ans
+                ans.get(n-1)[1] = Math.max(ans.get(n-1)[1], e[1]);
+            }
+        }
+        return ans;
+
+//        return ans.toArray(new int[ans.size()][]);
+//        if return type is int[][]
+    }
+
+    public long trap(int[] arr) {
+        if (arr == null || arr.length < 3) return 0;
+
+        int l = 0, r = arr.length - 1;
+        int leftMax = 0, rightMax = 0; // Max heights on the left and right
+        long ans = 0;
+
+        while (l <= r) {
+            if (arr[l] < arr[r]) {
+                // Water trapped depends on the left side
+                if (arr[l] >= leftMax) {
+                    leftMax = arr[l]; // Update the left max height
+                } else {
+                    ans += leftMax - arr[l]; // Calculate trapped water
+                }
+                l++;
+            } else {
+                // Water trapped depends on the right side
+                if (arr[r] >= rightMax) {
+                    rightMax = arr[r]; // Update the right max height
+                } else {
+                    ans += rightMax - arr[r]; // Calculate trapped water
+                }
+                r--;
+            }
+        }
+        return ans; // Return the total trapped water as a long
+    }
+
+
+//    public static int firstMissingPositive(int[] arr){
+//        Arrays.sort(arr);
+//        int i=0;
+//        while(i<arr.length-1){
+//            if(arr[i]<=0){
+//                i++;
+//            }
+//            if(arr[i+1]!=arr[i]+1){
+//                return arr[i]+1;
+//            }else{
+//                i++;
+//            }
+//        }
+//        return arr[i]+1;
+//    }
+    public static int firstMissingPositive(int[] arr) {
+        int n = arr.length;
+        // Step 1: Place each number in its correct position
+        for (int i = 0; i < n; i++) {
+            while (arr[i] > 0 && arr[i] <= n
+                    && arr[arr[i] - 1] != arr[i]) {
+                // Swap arr[i] with arr[arr[i] - 1]
+                int temp = arr[i];
+                arr[i] = arr[temp - 1];
+                arr[temp - 1] = temp;
+            }
+        }
+        // Step 2: Find the first index where arr[i] != i + 1
+        for (int i = 0; i < n; i++) {
+            if (arr[i] != i + 1) {
+                return i + 1;
+            }
+        }
+        // If all numbers are in place, return n + 1
+        return n + 1;
+    }
+
+
+    // A = [1, 3, 2, 4, 5] --> [1,2]indices
+    public static ArrayList<Integer> subUnsort(ArrayList<Integer> A) {
+        int n = A.size();
+        int l = 0, r = n - 1;
+
+        // Step 1: Find the first element from the left that is out of order
+        while (l < n - 1 && A.get(l) <= A.get(l + 1)) {
+            l++;
+        }
+        // If the entire array is sorted
+        if (l == n - 1) {
+            ArrayList<Integer> result = new ArrayList<>();
+            result.add(-1);
+            return result;
+        }
+
+        // Step 2: Find the first element from the right that is out of order
+        while (r > 0 && A.get(r) >= A.get(r - 1)) {
+            r--;
+        }
+
+        // Step 3: Find the min and max in the unsorted region
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int i = l; i <= r; i++) {
+            min = Math.min(min, A.get(i));
+            max = Math.max(max, A.get(i));
+        }
+
+        // Step 4: Expand the left and right boundaries
+        while (l > 0 && A.get(l - 1) > min) {
+            l--;
+        }
+        while (r < n - 1 && A.get(r + 1) < max) {
+            r++;
+        }
+
+        // Step 5: Return the result
+        ArrayList<Integer> result = new ArrayList<>();
+        result.add(l);
+        result.add(r);
+        return result;
+    }
+
+    ///////////// ************** couldn't understand
+    public static int getMinDiff(int[] A, int n, int k) {
+        // Step 1: Sort the array
+        Arrays.sort(A);
+
+        // Step 2: Calculate the initial difference
+        int minDiff = A[n - 1] - A[0];
+
+        // Step 3: Iterate through the array
+        int smallest = A[0] + k;
+        int largest = A[n - 1] - k;
+
+        for (int i = 0; i < n - 1; i++) {
+            int minHeight = Math.min(smallest, A[i + 1] - k);
+            int maxHeight = Math.max(largest, A[i] + k);
+            minDiff = Math.min(minDiff, maxHeight - minHeight);
+        }
+
+        return minDiff;
+    }
+    /////////////////////////////////////////////////
 
 
 
