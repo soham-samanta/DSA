@@ -7,6 +7,8 @@ class node{
     node left,right;
     public node(int val) {
         this.val = val;
+        left = null;
+        right = null;
     }
 }
 
@@ -37,24 +39,24 @@ public class BT {
 //        System.out.println(minInTree(root));
 //        System.out.println(heightOfBT(root));
 //        System.out.println(areCousin(root,11,45));
-//        ArrayList<Integer>ans=new ArrayList<>();
+        ArrayList<Integer>ans=new ArrayList<>();
 //        nodesAtLevelK(root,2,ans);
 //        System.out.println(ans);
 //        System.out.println(nodesAtLevelKIterative(root,2));
-//        rightView(root,0,ans);
+        System.out.println(rightSideView(root));
 //        ans=levelOrder(root);
-//        System.out.println(ans);
-//        ArrayList<ArrayList<Integer>>ans = levelOrder2(root);
-//        System.out.println(ans);
+        System.out.println(ans);
+//        ArrayList<ArrayList<Integer>>ans2 = levelOrder2(root);
+//        System.out.println(ans2);
 //        System.out.println(verticalOrder(root));
 //        System.out.println(topView(root));
 //        System.out.println(diameter(root));
 //        System.out.println(diameterOfBT(root));
 //        System.out.println(ancestor(root,23));
-//        node ans = lca(root,23,13);
-//        System.out.println(ans.val);
+//        node x = lca(root,23,13);
+//        System.out.println(x.val);
 //        System.out.println(distBet2Node(root,23,45));
-        System.out.println(distKfromTarget(root,11,1));
+//        System.out.println(distKfromTarget(root,11,1));
 
 
     }
@@ -94,9 +96,15 @@ public class BT {
         return Math.max(lh,rh)+1;
     }
 
-    /////// *** Imp ***
+    /////// *** Imp ***  -> same level && diff parents
     static node xPar , yPar;
     static int xLevel , yLevel;
+    public static boolean areCousin(node root, int x, int y){
+        areCousinHelper(root,null,x,y,0);
+        boolean sameLevel = xLevel==yLevel;
+        boolean diffParent = xPar!=yPar;
+        return sameLevel && diffParent;
+    }
     public static void areCousinHelper(node root, node par, int x, int y, int level){
         if(root==null) return;
         if(root.val==x){
@@ -110,12 +118,7 @@ public class BT {
         areCousinHelper(root.left,root,x,y,level+1);
         areCousinHelper(root.right,root,x,y,level+1);
     }
-    public static boolean areCousin(node root, int x, int y){
-        areCousinHelper(root,null,x,y,0);
-        boolean sameLevel = xLevel==yLevel;
-        boolean diffParent = xPar!=yPar;
-        return sameLevel && diffParent;
-    }
+
 
     // Nodes present at k distance from root -->
     //                                      (VARIATION) node at k dist from any node
@@ -130,10 +133,10 @@ public class BT {
     }
 
     static class Pair{
-        node x;
+        node Node;
         int level;
         public Pair(node x, int level) {
-            this.x = x;
+            this.Node = x;
             this.level = level;
         }
     }
@@ -146,26 +149,31 @@ public class BT {
 
         while(!stack.isEmpty()){
             Pair curr = stack.poll();
-            if(curr.x==null) continue;
+            if(curr.Node ==null) continue;
             if(curr.level==0){
-                ans.add(curr.x.val);
+                ans.add(curr.Node.val);
                 continue;
             }
 
-            stack.push(new Pair(curr.x.right,curr.level-1));
-            stack.push(new Pair(curr.x.left,curr.level-1));
+            stack.push(new Pair(curr.Node.right,curr.level-1));
+            stack.push(new Pair(curr.Node.left,curr.level-1));
 
         }
         return ans;
     }
 
-    public static void rightView(node root, int level, ArrayList<Integer>ans){
+    public static List<Integer> rightSideView(node root) {
+        ArrayList<Integer>ans=new ArrayList<>();
+        rightViewHelper(root,0,ans);
+        return ans;
+    }
+    public static void rightViewHelper(node root, int level, ArrayList<Integer>ans){
         if(root==null) return;
         if(level>=ans.size()){
             ans.add(root.val);
         }
-        rightView(root.right,level+1,ans);
-        rightView(root.left,level+1,ans);
+        rightViewHelper(root.right,level+1,ans);
+        rightViewHelper(root.left,level+1,ans);
     }
 
 
@@ -175,6 +183,7 @@ public class BT {
         Queue<node>q = new LinkedList<>();
         if(root==null) return ans;
         q.add(root);
+
         while(!q.isEmpty()){
             node curr = q.poll();
             ans.add(curr.val);
@@ -184,7 +193,7 @@ public class BT {
         return ans;
     }
 
-    public static ArrayList<ArrayList<Integer>> levelOrder2(node root){ // [ [],[],[] ]
+    public static ArrayList<ArrayList<Integer>> levelOrder2(node root){// [ [],[],[] ]
         ArrayList<ArrayList<Integer>>ans= new ArrayList<>();
         Queue<node>q = new LinkedList<>();
         if(root==null) return ans;
@@ -195,9 +204,9 @@ public class BT {
             node curr = q.poll();
             if(curr==null){
                 ans.add(temp);
-                if(q.isEmpty()) break;
-                temp=new ArrayList<>();
-                q.add(null);
+                if(q.isEmpty()) break;  //
+                temp=new ArrayList<>(); //
+                q.add(null);            //
             }else{
                 temp.add(curr.val);
                 if(curr.left!=null) q.add(curr.left);
@@ -224,11 +233,11 @@ public class BT {
 
         while(!q.isEmpty()){
             Pairr curr = q.poll();
-
             if(!map.containsKey(curr.hd)){
                 map.put(curr.hd,new ArrayList<>());
             }
             map.get(curr.hd).add(curr.Node.val); //
+
 
             if(curr.Node.left!=null){
                 q.add(new Pairr(curr.hd-1,curr.Node.left));
@@ -276,7 +285,7 @@ public class BT {
         return Math.max(Math.max(ld,rd),diameterMiddle);
     }
 
-    // Can be solved by modifying height code only -> Diameter = LeftHeight + RightHeight
+    // Can be solved by modifying (height code) only -> Diameter = LeftHeight + RightHeight
     public static int diameter = 0;
     public static int diameterOfBT(node root){
         if(root==null) return 0;
