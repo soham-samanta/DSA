@@ -2,10 +2,10 @@ package BinaryTree;
 
 import java.util.*;
 
-class node{
+class Node {
     int val;
-    node left,right;
-    public node(int val) {
+    TreeNode left,right;
+    public Node(int val) {
         this.val = val;
         left = null;
         right = null;
@@ -14,13 +14,13 @@ class node{
 
 public class BT {
     public static void main(String[] args) {
-        node root = new node(5);
-        root.left=new node(10);
-        root.left.left=new node(45);
-        root.right=new node(15);
-        root.right.left = new node(11);
-        root.right.left.right = new node(23);
-        root.right.right = new node(13);
+        TreeNode root = new TreeNode(5);
+        root.left=new TreeNode(10);
+        root.left.left=new TreeNode(45);
+        root.right=new TreeNode(15);
+        root.right.left = new TreeNode(11);
+        root.right.left.right = new TreeNode(23);
+        root.right.right = new TreeNode(13);
             /*
                          5
                         / \
@@ -61,35 +61,35 @@ public class BT {
 
     }
 
-    public static void inOrder(node root){
+    public static void inOrder(TreeNode root){
         if(root==null) return;
         inOrder(root.left);
         System.out.print(root.val+" ");
         inOrder(root.right);
     }
 
-    public static void preOrder(node root){
+    public static void preOrder(TreeNode root){
         if(root==null) return;
         System.out.print(root.val+" ");
         preOrder(root.left);
         preOrder(root.right);
     }
 
-    public static void postOrder(node root){
+    public static void postOrder(TreeNode root){
         if(root==null) return;
         postOrder(root.left);
         postOrder(root.right);
         System.out.print(root.val+" ");
     }
 
-    public static int minInTree(node root){
+    public static int minInTree(TreeNode root){
         if(root==null) return Integer.MAX_VALUE;
         int minFromLeft = minInTree(root.left);
         int minFromRight = minInTree(root.right);
         return Math.min(Math.min(minFromLeft,minFromRight),root.val);
     }
 
-    public static int heightOfBT(node root){
+    public static int heightOfBT(TreeNode root){
         if(root==null) return 0;
         int lh = heightOfBT(root.left);
         int rh = heightOfBT(root.right);
@@ -97,15 +97,15 @@ public class BT {
     }
 
     /////// *** Imp ***  -> same level && diff parents
-    static node xPar , yPar;
+    static TreeNode xPar , yPar;
     static int xLevel , yLevel;
-    public static boolean areCousin(node root, int x, int y){
+    public static boolean areCousin(TreeNode root, int x, int y){
         areCousinHelper(root,null,x,y,0);
         boolean sameLevel = xLevel==yLevel;
         boolean diffParent = xPar!=yPar;
         return sameLevel && diffParent;
     }
-    public static void areCousinHelper(node root, node par, int x, int y, int level){
+    public static void areCousinHelper(TreeNode root, TreeNode par, int x, int y, int level){
         if(root==null) return;
         if(root.val==x){
             xPar = par;
@@ -122,7 +122,7 @@ public class BT {
 
     // Nodes present at k distance from root -->
     //                                      (VARIATION) node at k dist from any node
-    public static void nodesAtLevelK(node root, int k, ArrayList<Integer>ans){// k->level
+    public static void nodesAtLevelK(TreeNode root, int k, ArrayList<Integer>ans){// k->level
         if(root==null || k<0)return;
         if(k==0){
             ans.add(root.val);
@@ -133,14 +133,14 @@ public class BT {
     }
 
     static class Pair{
-        node Node;
+        TreeNode Node;
         int level;
-        public Pair(node x, int level) {
+        public Pair(TreeNode x, int level) {
             this.Node = x;
             this.level = level;
         }
     }
-    public static ArrayList<Integer>  nodesAtLevelKIterative(node root, int level){
+    public static ArrayList<Integer>  nodesAtLevelKIterative(TreeNode root, int level){
         ArrayList<Integer>ans=new ArrayList<>();
         ArrayDeque<Pair>stack=new ArrayDeque<>();
 
@@ -162,12 +162,12 @@ public class BT {
         return ans;
     }
 
-    public static List<Integer> rightSideView(node root) {
+    public static List<Integer> rightSideView(TreeNode root) {
         ArrayList<Integer>ans=new ArrayList<>();
         rightViewHelper(root,0,ans);
         return ans;
     }
-    public static void rightViewHelper(node root, int level, ArrayList<Integer>ans){
+    public static void rightViewHelper(TreeNode root, int level, ArrayList<Integer>ans){
         if(root==null) return;
         if(level>=ans.size()){
             ans.add(root.val);
@@ -178,14 +178,14 @@ public class BT {
 
 
     //------------------------------------------------------------------------------
-    public static ArrayList<Integer> levelOrder(node root){
+    public static ArrayList<Integer> levelOrder(TreeNode root){
         ArrayList<Integer>ans= new ArrayList<>();
-        Queue<node>q = new LinkedList<>();
+        Queue<TreeNode>q = new LinkedList<>();
         if(root==null) return ans;
         q.add(root);
 
         while(!q.isEmpty()){
-            node curr = q.poll();
+            TreeNode curr = q.poll();
             ans.add(curr.val);
             if(curr.left!=null) q.add(curr.left);
             if(curr.right!=null) q.add(curr.right);
@@ -193,15 +193,15 @@ public class BT {
         return ans;
     }
 
-    public static ArrayList<ArrayList<Integer>> levelOrder2(node root){// [ [],[],[] ]
+    public static ArrayList<ArrayList<Integer>> levelOrder2(TreeNode root){// [ [],[],[] ]
         ArrayList<ArrayList<Integer>>ans= new ArrayList<>();
-        Queue<node>q = new LinkedList<>();
+        Queue<TreeNode>q = new LinkedList<>();
         if(root==null) return ans;
         q.add(root);
         q.add(null); //
         ArrayList<Integer>temp=new ArrayList<>(); //
         while(!q.isEmpty()){
-            node curr = q.poll();
+            TreeNode curr = q.poll();
             if(curr==null){
                 ans.add(temp);
                 if(q.isEmpty()) break;  //
@@ -219,13 +219,13 @@ public class BT {
     // Vertical Order Traversal
     static class Pairr{
         int hd; // horizontal distance
-        node Node;
-        public Pairr(int hd, node node) {
+        TreeNode Node;
+        public Pairr(int hd, TreeNode node) {
             this.hd = hd;
             Node = node;
         }
     }
-    public static ArrayList<ArrayList<Integer>> verticalOrder(node root){
+    public static ArrayList<ArrayList<Integer>> verticalOrder(TreeNode root){
         Queue<Pairr> q = new LinkedList<>();
         TreeMap<Integer,ArrayList<Integer>>map=new TreeMap<>();
 
@@ -249,7 +249,7 @@ public class BT {
         return new ArrayList<>(map.values());
     }
 
-    public static ArrayList<Integer>topView(node root){
+    public static ArrayList<Integer>topView(TreeNode root){
         Queue<Pairr> q = new LinkedList<>();
         TreeMap<Integer,Integer>map=new TreeMap<>();
 
@@ -273,7 +273,7 @@ public class BT {
         return new ArrayList<>(map.values());
     }
 
-    public static int diameter(node root){ // O(N^2)  -> calling height for each node
+    public static int diameter(TreeNode root){ // O(N^2)  -> calling height for each node
         if(root==null) return 0;
         int lh = heightOfBT(root.left);
         int rh = heightOfBT(root.right);
@@ -287,7 +287,7 @@ public class BT {
 
     // Can be solved by modifying (height code) only -> Diameter = LeftHeight + RightHeight
     public static int diameter = 0;
-    public static int diameterOfBT(node root){
+    public static int diameterOfBT(TreeNode root){
         if(root==null) return 0;
         int lh = diameterOfBT(root.left);
         int rh = diameterOfBT(root.right);
@@ -295,12 +295,12 @@ public class BT {
         return Math.max(diameter,(Math.max(lh,rh)+1));
     }
 
-    public static ArrayList<Integer> ancestor(node root,int target){
+    public static ArrayList<Integer> ancestor(TreeNode root, int target){
         ArrayList<Integer>ans = new ArrayList<>();
         ancestorHelper(root,ans,target);
         return ans;
     }
-    public static boolean ancestorHelper(node root, ArrayList<Integer>ans, int k){
+    public static boolean ancestorHelper(TreeNode root, ArrayList<Integer>ans, int k){
         if(root==null) return false;
         if(root.val==k) return true;
         boolean isPresentLeft = ancestorHelper(root.left,ans,k);
@@ -312,12 +312,12 @@ public class BT {
         return false;
     }
 
-    public static node lca(node root, int a , int b){
+    public static TreeNode lca(TreeNode root, int a , int b){  // *** IMP ***
         if(root==null) return null;
         if(root.val==a || root.val==b) return root;
 
-        node left = lca(root.left,a,b);
-        node right = lca(root.right,a,b);
+        TreeNode left = lca(root.left,a,b);
+        TreeNode right = lca(root.right,a,b);
 
         if(left==null) return right;
         if(right==null) return left;
@@ -327,16 +327,14 @@ public class BT {
 
     // dist(lca,a) + dist(lca,b) --> one way
     // other way -> dist(root,a) + dist(root,b) - 2 * dist(root,lca)
-    public static int distBet2Node(node root, int a , int b){
-        node lca = lca(root,a,b);
+    public static int distBet2Node(TreeNode root, int a , int b){
+        TreeNode lca = lca(root,a,b);
         Integer distA = dist(root,a);
         Integer distB = dist(root,b);
         Integer distLCA = dist(root,lca.val);
-
         return distA+distB-(2*distLCA);
-
     }
-    public static Integer dist(node root, int x){
+    public static Integer dist(TreeNode root, int x){
         if(root==null) return null;
         if(root.val==x) return 0;
 
@@ -354,7 +352,7 @@ public class BT {
 
 
     // Nodes Distance K in a Binary Tree Code ->    ***** IMP ******
-    static void distKdown(node root, int k, List<Integer>ans){//same->nodesAtLevelK
+    static void distKdown(TreeNode root, int k, List<Integer>ans){//same->nodesAtLevelK
         if(root==null || k<0) return;
         if(k==0){
             ans.add(root.val);
@@ -363,13 +361,13 @@ public class BT {
         distKdown(root.left,k-1,ans);
         distKdown(root.right,k-1,ans);
     }
-    static List<Integer> distKfromTarget(node root, int target, int k){
+    static List<Integer> distKfromTarget(TreeNode root, int target, int k){
         List<Integer>ans = new ArrayList<>();
         distKfromTarget(root,target,k,ans);
         return ans;
     }
     // return value is the distance of target from the root node
-    static int distKfromTarget(node root, int target, int k, List<Integer>ans){
+    static int distKfromTarget(TreeNode root, int target, int k, List<Integer>ans){
         if(root==null) return -1;
 
         if(root.val==target){
@@ -405,7 +403,7 @@ public class BT {
     // but needs to be solved inPlace -> Modify tree structure
     // 2way-> root -> left -> right-right-right-null x (predecessor)
     //             -> right -> left-left-left-null x (successor)
-    static node convert(node root){
+    static TreeNode convert(TreeNode root){
         if(root==null) return null;
         convertBT2DLL(root);
         while (root.left!=null){
@@ -413,11 +411,11 @@ public class BT {
         }
         return root;
     }
-    static node convertBT2DLL(node root){
+    static TreeNode convertBT2DLL(TreeNode root){
         if(root==null) return null;
 
         if(root.left!=null){
-            node leftRoot = convertBT2DLL(root.left);
+            TreeNode leftRoot = convertBT2DLL(root.left);
             while(leftRoot.right!=null){
                 leftRoot = leftRoot.right;
             }
@@ -426,7 +424,7 @@ public class BT {
         }
 
         if(root.right!=null){
-            node rightRoot=convertBT2DLL(root.right);
+            TreeNode rightRoot=convertBT2DLL(root.right);
                 while(rightRoot.left!=null){
                     rightRoot=rightRoot.left;
                 }
