@@ -1,5 +1,6 @@
 package BinaryTree;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 class node {
@@ -31,6 +32,8 @@ public class BT {
                            23
              */
 
+        System.out.println(findMaxSubtree(root));
+
 //        inOrder(root);
 //        System.out.println();
 //        preOrder(root);
@@ -43,7 +46,7 @@ public class BT {
 //        nodesAtLevelK(root,2,ans);
 //        System.out.println(ans);
 //        System.out.println(nodesAtLevelKIterative(root,2));
-        System.out.println(rightSideView(root));
+//        System.out.println(rightSideView(root));
 //        ans=levelOrder(root);
 //        System.out.println(ans);
 //        ArrayList<ArrayList<Integer>>ans2 = levelOrder2(root);
@@ -438,7 +441,7 @@ public class BT {
 
 
 
-    ///////////////////////// HomeWork ///////////////////////////////////
+    //////////////////////////// HomeWork ///////////////////////////////////
 
     public static boolean hasPathSum(node root, int targetSum) {
         // Base case: if the root is null, no path exists
@@ -487,9 +490,75 @@ public class BT {
         return ans;
     }
 
+    static void traverseTreeHelper(node node, String s, List<String> ans) {
+        if (node == null) return;
+        s += node.val;
+        if (node.left == null && node.right == null) { // leaf
+            ans.add(s);
+        } else {
+            s += "->";
+            traverseTreeHelper(node.left, s, ans);
+            traverseTreeHelper(node.right, s, ans);
+        }
+    }
 
 
 
+
+    /////////////////////////////// Assignment ///////////////////////////////////
+
+    private static int ans = Integer.MIN_VALUE;
+    public static int findMaxSubtree(node root) {
+        ans = Integer.MIN_VALUE; // Reset for new tree
+        findMaxSubtreeHelper(root);
+        return ans;
+    }
+    public static int findMaxSubtreeHelper(node root){
+        if(root==null) return 0;
+        int leftMax = findMaxSubtreeHelper(root.left);
+        int rightMax = findMaxSubtreeHelper(root.right);
+        int currSum = leftMax+rightMax+root.val;
+        ans = Math.max(ans,currSum);
+        return currSum;
+    }
+
+    public static boolean isSymmetric(node root){
+        if (root == null) return true;
+        return isMirror(root.left, root.right);
+    }
+    private static boolean isMirror(node l, node r) {
+        if (l == null && r == null) return true;
+        if (l == null || r == null) return false;
+
+        return (l.val == r.val) &&
+            isMirror(l.left, r.right) &&
+            isMirror(l.right, r.left);
+    }
+
+    public int minDepth(node root) {
+        if (root == null) return 0;
+
+        int ld = minDepth(root.left);
+        int rd = minDepth(root.right);
+
+        // If one of the subtrees is null,return the depth of the other subtree + 1 (current node).
+        if (root.left == null || root.right == null) {
+            return Math.max(ld, rd) + 1;
+        }
+        // If both subtrees exist, return the minimum of the two depths + 1 (current node).
+        return Math.min(ld, rd) + 1;
+    }
+
+    public static boolean hasDuplicateValues(node root) {
+        HashSet<Integer> set = new HashSet<>();
+        return checkDuplicates(root, set);
+    }
+    private static boolean checkDuplicates(node node, HashSet<Integer> set) {
+        if (node == null) return false;
+        if (set.contains(node.val)) return true;
+        set.add(node.val);
+        return checkDuplicates(node.left, set) || checkDuplicates(node.right, set);
+    }
 
 
 
