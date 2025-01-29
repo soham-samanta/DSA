@@ -4,7 +4,10 @@ public class Array {
     public static void main(String[] args) {
 
         ArrayList<Integer>a=new ArrayList<>(Arrays.asList(1, 3, 2, 4, 5));
-        System.out.println(subUnsort(a));
+//        System.out.println(subUnsort(a));
+
+        Collections.reverse(a);
+        System.out.println(a);
 
 //        int[]arr={3,4,-1,-2,1};
 //        System.out.println(firstMissingPositive(arr));

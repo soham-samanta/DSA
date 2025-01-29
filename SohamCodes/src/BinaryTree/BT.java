@@ -561,6 +561,58 @@ public class BT {
     }
 
 
+    // ------------------------------ Hard & Medium Qs ---------------------------->
+    public static ArrayList<Integer> boundaryTraversal(node root){
+        ArrayList<Integer> ans = new ArrayList<>();
+        if (root == null) return ans;
+
+        // Step 1: Add root node to result
+        ans.add(root.val);
+        // Step 2: Add left boundary (excluding leaf nodes)
+        addLeftBoundary(root.left, ans);
+        // Step 3: Add leaf nodes
+        addLeaves(root, ans);
+        // Step 4: Add right boundary (excluding root and leaf nodes)
+        addRightBoundary(root.right, ans);
+
+        return ans;
+    }
+    private static void addLeftBoundary(node root, ArrayList<Integer> ans) {
+        while (root != null) {
+            if (root.left != null || root.right != null) {
+                ans.add(root.val);
+            }
+            if(root.left != null) root = root.left;
+            else root = root.right;
+        }
+    }
+    private static void addRightBoundary(node root, ArrayList<Integer> ans) {
+        ArrayList<Integer> temp = new ArrayList<>();
+        while (root != null) {
+            if (root.left != null || root.right != null) {
+                ans.add(root.val);
+            }
+            if (root.right != null) root = root.right;
+            else root = root.left;
+        }
+        // Add right boundary in reverse order
+        for (int i = temp.size() - 1; i >= 0; i--) {
+            ans.add(temp.get(i));
+        }
+    }
+    private static void addLeaves(node root, ArrayList<Integer> ans) {
+        if (root == null) {
+            return;
+        }
+        if (root.left == null && root.right == null) {
+            ans.add(root.val);
+        }
+        addLeaves(root.left, ans);
+        addLeaves(root.right, ans);
+    }
+
+
+
 
 
 
