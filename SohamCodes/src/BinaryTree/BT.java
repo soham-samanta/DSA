@@ -124,7 +124,7 @@ public class BT {
 
 
     // Nodes present at k distance from root -->
-    //                                      (VARIATION) node at k dist from any node
+    //                           (VARIATION) node at k dist from any node
     public static void nodesAtLevelK(node root, int k, ArrayList<Integer>ans){// k->level
         if(root==null || k<0)return;
         if(k==0){
@@ -596,7 +596,7 @@ public class BT {
             else root = root.left;
         }
         // Add right boundary in reverse order
-        for (int i = temp.size() - 1; i >= 0; i--) {
+        for(int i=temp.size()-1; i>=0; i--) {
             ans.add(temp.get(i));
         }
     }
@@ -609,6 +609,82 @@ public class BT {
         }
         addLeaves(root.left, ans);
         addLeaves(root.right, ans);
+    }
+
+    public static node sufficientSubset(node root, int limit) {
+        return prune(root, 0, limit);
+    }
+
+    private static node prune(node node, int sum, int limit) {
+        if (node == null) return null;
+        sum += node.val;
+
+        if (node.left == null && node.right == null) {    // Leaf check
+            return sum >= limit ? node : null;
+        }
+
+        node.left = prune(node.left, sum, limit);
+        node.right = prune(node.right, sum, limit);
+
+        if (node.left == null && node.right == null) return null;
+        return node;
+    }
+
+    public static boolean isBalanced(node root) {
+        return checkHeight(root) != -1;
+    }
+    private static int checkHeight(node root) {
+        if (root == null) return 0;
+
+        int leftHeight = checkHeight(root.left);
+        if (leftHeight == -1) return -1;
+
+        int rightHeight = checkHeight(root.right);
+        if (rightHeight == -1) return -1;
+
+        if (Math.abs(leftHeight - rightHeight) > 1) return -1;
+
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    public static boolean isSumTree(node root) {
+        if (root == null) return true; // An empty tree is a sum tree
+        if (root.left == null && root.right == null) return true; // A leaf node is a sum tree
+
+        int leftSum = sum(root.left);
+        int rightSum = sum(root.right);
+
+        // Check if current node follows sum tree property
+        if (root.val == leftSum + rightSum
+                && isSumTree(root.left)
+                && isSumTree(root.right)) {
+            return true;
+        }
+
+        return false;
+    }
+    private static int sum(node root) {
+        if (root == null) return 0;
+        return root.val + sum(root.left) + sum(root.right);
+    }
+
+    public static boolean checkEqualTree(node root) {
+        HashSet<Integer> set = new HashSet<>();
+        int totalSum = getTreeSum(root, set, root);
+        if (totalSum % 2 != 0) return false; // odd
+        return set.contains(totalSum / 2);
+    }
+    private static int getTreeSum(node curr, HashSet<Integer> set, node root) {
+        if (curr == null) return 0;
+        int leftSum = getTreeSum(curr.left, set, root);
+        int rightSum = getTreeSum(curr.right, set, root);
+        int subtreeSum = curr.val + leftSum + rightSum;
+
+        // Avoid considering the sum of the entire tree
+        if (curr != root) {
+            set.add(subtreeSum);
+        }
+        return subtreeSum;
     }
 
 
