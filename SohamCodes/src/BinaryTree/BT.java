@@ -687,6 +687,44 @@ public class BT {
         return subtreeSum;
     }
 
+    public node mergeTrees(node root1, node root2) {
+        if (root1 == null) return root2;
+        if (root2 == null) return root1;
+
+        // Merge the root nodes
+        node merged = new node(root1.val + root2.val);
+
+        // Recursively merge left and right subtrees
+        merged.left = mergeTrees(root1.left, root2.left);
+        merged.right = mergeTrees(root1.right, root2.right);
+
+        return merged;
+    }
+
+
+    public int longestConsecutive(node root) {
+        if (root == null) return 0;
+        int res = dfs(root, null, 0);
+        if (res <= 1) return -1;
+        else return res;
+    }
+    public int dfs(node curr, node parent, int len) {
+        if (curr == null) return len;
+        len = (parent != null && curr.val == parent.val + 1) ? len + 1 : 1;
+
+        int leftLen = dfs(curr.left, curr, len);
+        int rightLen = dfs(curr.right, curr, len);
+
+        if (parent != null && curr.val == parent.val + 1) {
+            return Math.max(len, Math.max(leftLen, rightLen));
+        }
+        return Math.max(leftLen, rightLen);
+    }
+
+
+
+
+
 
 
 
