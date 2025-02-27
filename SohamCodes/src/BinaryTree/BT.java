@@ -32,7 +32,7 @@ public class BT {
                            23
              */
 
-        System.out.println(findMaxSubtree(root));
+//        System.out.println(findMaxSubtree(root));
 
 //        inOrder(root);
 //        System.out.println();
@@ -60,6 +60,7 @@ public class BT {
 //        System.out.println(x.val);
 //        System.out.println(distBet2Node(root,23,45));
 //        System.out.println(distKfromTarget(root,11,1));
+        System.out.println(boundaryTraversal(root));
 
 
     }
@@ -282,7 +283,8 @@ public class BT {
         int lh = heightOfBT(root.left);
         int rh = heightOfBT(root.right);
 
-        int diameterMiddle = lh+rh;
+        int diameterMiddle = lh+rh; // diameter = lh + rh
+
         int ld = diameter(root.left);
         int rd = diameter(root.right);
 
@@ -338,7 +340,7 @@ public class BT {
         Integer distLCA = dist(root,lca.val);
         return distA+distB-(2*distLCA);
     }
-    public static Integer dist(node root, int x){
+    public static Integer dist(node root, int x){ // Integer coz -> use of null
         if(root==null) return null;
         if(root.val==x) return 0;
 
@@ -356,7 +358,7 @@ public class BT {
 
 
     // Nodes Distance K in a Binary Tree Code ->    ***** IMP ******
-    static void distKdown(node root, int k, List<Integer>ans){//same->nodesAtLevelK
+    static void distKdown(node root, int k, List<Integer>ans){//same code->nodesAtLevelK
         if(root==null || k<0) return;
         if(k==0){
             ans.add(root.val);
@@ -426,15 +428,14 @@ public class BT {
             leftRoot.right = root;
             root.left = leftRoot;
         }
-
         if(root.right!=null){
             node rightRoot=convertBT2DLL(root.right);
-                while(rightRoot.left!=null){
-                    rightRoot=rightRoot.left;
-                }
-                rightRoot.left = root;
-                root.right = rightRoot;
+            while(rightRoot.left!=null){
+                rightRoot=rightRoot.left;
             }
+            rightRoot.left = root;
+            root.right = rightRoot;
+        }
 
         return root;
     }
@@ -464,7 +465,6 @@ public class BT {
         ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
         Queue<node> q = new LinkedList<>();
         if (root == null) return ans;
-
         q.add(root);
         q.add(null);
         ArrayList<Integer> temp = new ArrayList<>();
@@ -474,12 +474,10 @@ public class BT {
             node curr = q.poll();
             if (curr == null) {
                 if (!leftToRight) Collections.reverse(temp); // Reverse the level if needed
-
                 ans.add(temp);
                 if (q.isEmpty()) break;
                 temp = new ArrayList<>();
                 q.add(null);
-
                 leftToRight = !leftToRight; // Toggle direction
             } else {
                 temp.add(curr.val);
@@ -490,17 +488,29 @@ public class BT {
         return ans;
     }
 
-    static void traverseTreeHelper(node node, String s, List<String> ans) {
-        if (node == null) return;
-        s += node.val;
-        if (node.left == null && node.right == null) { // leaf
+    public static List<String> binaryTreePaths(node root) {
+        List<String> ans = new ArrayList<>();
+        String s = "";
+        traverseTreeHelper(root,s,ans);
+        return ans;
+    }
+    static void traverseTreeHelper(node root, String s, List<String> ans) {
+        if (root == null) return;
+        s += root.val;
+        if (root.left == null && root.right == null) { // leaf
             ans.add(s);
         } else {
             s += "->";
-            traverseTreeHelper(node.left, s, ans);
-            traverseTreeHelper(node.right, s, ans);
+            traverseTreeHelper(root.left, s, ans);
+            traverseTreeHelper(root.right, s, ans);
         }
     }
+
+
+
+
+
+
 
 
 
@@ -537,10 +547,8 @@ public class BT {
 
     public int minDepth(node root) {
         if (root == null) return 0;
-
         int ld = minDepth(root.left);
         int rd = minDepth(root.right);
-
         // If one of the subtrees is null,return the depth of the other subtree + 1 (current node).
         if (root.left == null || root.right == null) {
             return Math.max(ld, rd) + 1;
@@ -553,11 +561,11 @@ public class BT {
         HashSet<Integer> set = new HashSet<>();
         return checkDuplicates(root, set);
     }
-    private static boolean checkDuplicates(node node, HashSet<Integer> set) {
-        if (node == null) return false;
-        if (set.contains(node.val)) return true;
-        set.add(node.val);
-        return checkDuplicates(node.left, set) || checkDuplicates(node.right, set);
+    private static boolean checkDuplicates(node root, HashSet<Integer> set) {
+        if (root == null) return false;
+        if (set.contains(root.val)) return true;
+        set.add(root.val);
+        return checkDuplicates(root.left, set) || checkDuplicates(root.right, set);
     }
 
 
@@ -611,71 +619,50 @@ public class BT {
         addLeaves(root.right, ans);
     }
 
+
     public static node sufficientSubset(node root, int limit) {
         return prune(root, 0, limit);
     }
+    private static node prune(node root, int sum, int limit) {
+        if (root == null) return null;
+        sum += root.val;
 
-    private static node prune(node node, int sum, int limit) {
-        if (node == null) return null;
-        sum += node.val;
-
-        if (node.left == null && node.right == null) {    // Leaf check
-            return sum >= limit ? node : null;
+        if (root.left == null && root.right == null) {    // Leaf check
+            return sum >= limit ? root : null;
         }
 
-        node.left = prune(node.left, sum, limit);
-        node.right = prune(node.right, sum, limit);
+        root.left = prune(root.left, sum, limit);
+        root.right = prune(root.right, sum, limit);
 
-        if (node.left == null && node.right == null) return null;
-        return node;
+        //If a Node’s Children are Removed, Remove the Node
+        if (root.left == null && root.right == null) return null;
+        return root;
     }
 
     public static boolean isBalanced(node root) {
         return checkHeight(root) != -1;
     }
-    private static int checkHeight(node root) {
+    private static int checkHeight(node root) {  // same as heightOfBT code
         if (root == null) return 0;
 
-        int leftHeight = checkHeight(root.left);
-        if (leftHeight == -1) return -1;
+        int lh = checkHeight(root.left);
+        if (lh == -1) return -1; //
+        int rh = checkHeight(root.right);
+        if (rh == -1) return -1; //
 
-        int rightHeight = checkHeight(root.right);
-        if (rightHeight == -1) return -1;
-
-        if (Math.abs(leftHeight - rightHeight) > 1) return -1;
-
-        return Math.max(leftHeight, rightHeight) + 1;
-    }
-
-    public static boolean isSumTree(node root) {
-        if (root == null) return true; // An empty tree is a sum tree
-        if (root.left == null && root.right == null) return true; // A leaf node is a sum tree
-
-        int leftSum = sum(root.left);
-        int rightSum = sum(root.right);
-
-        // Check if current node follows sum tree property
-        if (root.val == leftSum + rightSum
-                && isSumTree(root.left)
-                && isSumTree(root.right)) {
-            return true;
-        }
-
-        return false;
-    }
-    private static int sum(node root) {
-        if (root == null) return 0;
-        return root.val + sum(root.left) + sum(root.right);
+        if (Math.abs(lh - rh) > 1) return -1; //
+        return Math.max(lh, rh) + 1;
     }
 
     public static boolean checkEqualTree(node root) {
         HashSet<Integer> set = new HashSet<>();
         int totalSum = getTreeSum(root, set, root);
-        if (totalSum % 2 != 0) return false; // odd
+        if (totalSum % 2 != 0) return false; // if odd
         return set.contains(totalSum / 2);
     }
     private static int getTreeSum(node curr, HashSet<Integer> set, node root) {
         if (curr == null) return 0;
+
         int leftSum = getTreeSum(curr.left, set, root);
         int rightSum = getTreeSum(curr.right, set, root);
         int subtreeSum = curr.val + leftSum + rightSum;
@@ -701,16 +688,16 @@ public class BT {
         return merged;
     }
 
-
     public int longestConsecutive(node root) {
         if (root == null) return 0;
-        int res = dfs(root, null, 0);
-        if (res <= 1) return -1;
-        else return res;
+        int ans = dfs(root, null, 0);
+        if (ans <= 1) return -1;
+        else return ans;
     }
     public int dfs(node curr, node parent, int len) {
         if (curr == null) return len;
-        len = (parent != null && curr.val == parent.val + 1) ? len + 1 : 1;
+        if (parent != null && curr.val == parent.val + 1) len = len + 1;
+        else len = 1;
 
         int leftLen = dfs(curr.left, curr, len);
         int rightLen = dfs(curr.right, curr, len);
@@ -720,6 +707,111 @@ public class BT {
         }
         return Math.max(leftLen, rightLen);
     }
+
+    public static node buildTreePreIn(List<Integer> preorder, List<Integer> inorder) {
+        if (preorder == null || inorder == null || preorder.size() != inorder.size() || preorder.isEmpty()) {
+            return null;
+        }
+        // Store inorder values and their indices for quick lookup
+        Map<Integer, Integer> inorderMap = new HashMap<>();
+        for (int i = 0; i < inorder.size(); i++) {
+            inorderMap.put(inorder.get(i), i);
+        }
+
+        // Recursive function to build the tree
+        return constructTree(preorder, 0, preorder.size() - 1, inorderMap, 0, inorder.size() - 1);
+    }
+    private static node constructTree(List<Integer> preorder, int preStart, int preEnd,
+                          Map<Integer, Integer> inorderMap, int inStart, int inEnd) {
+        // Base case
+        if (preStart > preEnd || inStart > inEnd) return null;
+
+        // Get root value and create TreeNode
+        int rootValue = preorder.get(preStart);
+        node root = new node(rootValue);
+
+        // Find root index in inorder array
+        int rootIndex = inorderMap.get(rootValue);
+        int leftSubtreeSize = rootIndex - inStart;  // Number of nodes in left subtree
+
+        // Recursively build left and right subtrees
+        root.left = constructTree(preorder, preStart + 1, preStart + leftSubtreeSize,
+                inorderMap, inStart, rootIndex - 1);
+
+        root.right = constructTree(preorder, preStart + leftSubtreeSize + 1, preEnd,
+                inorderMap, rootIndex + 1, inEnd);
+
+        return root;
+    }
+
+
+    public static node buildTreePostIn(List<Integer> inorder, List<Integer> postorder) {
+        if (inorder == null || postorder == null || inorder.size() != postorder.size() || inorder.isEmpty()) {
+            return null;
+        }
+
+        // Store inorder values and their indices for quick lookup
+        Map<Integer, Integer> inorderMap = new HashMap<>();
+        for (int i = 0; i < inorder.size(); i++) {
+            inorderMap.put(inorder.get(i), i);
+        }
+
+        // Recursive function to build the tree
+        return constructTree(inorder, 0, inorder.size() - 1,
+                postorder, 0, postorder.size() - 1,
+                inorderMap);
+    }
+    private static node constructTree(List<Integer> inorder, int inStart, int inEnd,
+                              List<Integer> postorder, int postStart, int postEnd,
+                              Map<Integer, Integer> inorderMap) {
+        // Base case
+        if (postStart > postEnd || inStart > inEnd) return null;
+
+        // Get root value from postorder (last element)
+        int rootValue = postorder.get(postEnd);
+        node root = new node(rootValue);
+
+        // Find root index in inorder array
+        int rootIndex = inorderMap.get(rootValue);
+        int leftSubtreeSize = rootIndex - inStart;  // Number of nodes in left subtree
+
+        // Recursively build left and right subtrees
+        root.left = constructTree(inorder, inStart, rootIndex - 1,
+                postorder, postStart, postStart + leftSubtreeSize - 1,
+                inorderMap);
+
+        root.right = constructTree(inorder, rootIndex + 1, inEnd,
+                postorder, postStart + leftSubtreeSize, postEnd - 1,
+                inorderMap);
+
+        return root;
+    }
+
+
+    public static boolean isSumTree(node root) {
+        if (root == null) return true; // An empty tree is a sum tree
+        if (root.left == null && root.right == null) return true; // A leaf node is a sum tree
+
+        int leftSum = sum(root.left);
+        int rightSum = sum(root.right);
+
+        // Check if current node follows sum tree property
+        if (root.val == leftSum + rightSum
+                && isSumTree(root.left)
+                && isSumTree(root.right)) {
+            return true;
+        }
+
+        return false;
+    }
+    private static int sum(node root) {
+        if (root == null) return 0;
+        return root.val + sum(root.left) + sum(root.right);
+    }
+
+
+
+
 
 
 
