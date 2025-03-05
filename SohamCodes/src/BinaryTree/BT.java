@@ -180,6 +180,29 @@ public class BT {
         rightViewHelper(root.left,level+1,ans);
     }
 
+    public static List<List<Integer>> lOrder(node root){
+        List<List<Integer>>ans = new ArrayList<>();
+        Queue<node>q = new LinkedList<>();
+        if(root==null) return ans;
+        q.add(root);
+        q.add(null); //
+        ArrayList<Integer>temp = new ArrayList<>();
+        while(!q.isEmpty()){
+            node curr = q.poll();
+            if(curr==null){
+                ans.add(temp);
+                if(q.isEmpty()) break;
+                temp=new ArrayList<>();
+                q.add(null);
+
+            }else{
+                temp.add(curr.val);
+                if(curr.left!=null) q.add(curr.left);
+                if(curr.right!=null) q.add(curr.right);
+            }
+        }
+        return ans;
+    }
 
     //------------------------------------------------------------------------------
     public static ArrayList<Integer> levelOrder(node root){
@@ -208,7 +231,7 @@ public class BT {
             node curr = q.poll();
             if(curr==null){
                 ans.add(temp);
-                if(q.isEmpty()) break;  //
+                if(q.isEmpty()) break;  // prevents adding an extra null at the end of traversal.
                 temp=new ArrayList<>(); //
                 q.add(null);            //
             }else{
@@ -335,9 +358,11 @@ public class BT {
     // other way -> dist(root,a) + dist(root,b) - 2 * dist(root,lca)
     public static int distBet2Node(node root, int a , int b){
         node lca = lca(root,a,b);
+
         Integer distA = dist(root,a);
         Integer distB = dist(root,b);
         Integer distLCA = dist(root,lca.val);
+
         return distA+distB-(2*distLCA);
     }
     public static Integer dist(node root, int x){ // Integer coz -> use of null
@@ -348,7 +373,6 @@ public class BT {
         Integer rightDist = dist(root.right,x);
 
         if(leftDist==null && rightDist==null) return null;
-
         if(leftDist==null) return rightDist+1;
         if(rightDist==null) return leftDist+1;
 
@@ -436,7 +460,6 @@ public class BT {
             rightRoot.left = root;
             root.right = rightRoot;
         }
-
         return root;
     }
 
@@ -554,7 +577,7 @@ public class BT {
             return Math.max(ld, rd) + 1;
         }
         // If both subtrees exist, return the minimum of the two depths + 1 (current node).
-        return Math.min(ld, rd) + 1;
+        return Math.min(ld, rd) + 1; // min
     }
 
     public static boolean hasDuplicateValues(node root) {
@@ -622,7 +645,7 @@ public class BT {
 
     public static node sufficientSubset(node root, int limit) {
         return prune(root, 0, limit);
-    }
+    } // Qs -> Remove path with (sum>=limit)
     private static node prune(node root, int sum, int limit) {
         if (root == null) return null;
         sum += root.val;
@@ -713,16 +736,16 @@ public class BT {
             return null;
         }
         // Store inorder values and their indices for quick lookup
-        Map<Integer, Integer> inorderMap = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < inorder.size(); i++) {
-            inorderMap.put(inorder.get(i), i);
+            map.put(inorder.get(i), i);
         }
-
         // Recursive function to build the tree
-        return constructTree(preorder, 0, preorder.size() - 1, inorderMap, 0, inorder.size() - 1);
+        return constructTree(preorder, 0, preorder.size() - 1,
+                map, 0, inorder.size() - 1);
     }
     private static node constructTree(List<Integer> preorder, int preStart, int preEnd,
-                          Map<Integer, Integer> inorderMap, int inStart, int inEnd) {
+                          Map<Integer,Integer> map, int inStart, int inEnd) {
         // Base case
         if (preStart > preEnd || inStart > inEnd) return null;
 
@@ -731,15 +754,15 @@ public class BT {
         node root = new node(rootValue);
 
         // Find root index in inorder array
-        int rootIndex = inorderMap.get(rootValue);
+        int rootIndex = map.get(rootValue);
         int leftSubtreeSize = rootIndex - inStart;  // Number of nodes in left subtree
 
         // Recursively build left and right subtrees
         root.left = constructTree(preorder, preStart + 1, preStart + leftSubtreeSize,
-                inorderMap, inStart, rootIndex - 1);
+                map, inStart, rootIndex - 1);
 
         root.right = constructTree(preorder, preStart + leftSubtreeSize + 1, preEnd,
-                inorderMap, rootIndex + 1, inEnd);
+                map, rootIndex + 1, inEnd);
 
         return root;
     }
