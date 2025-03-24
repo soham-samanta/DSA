@@ -34,7 +34,8 @@ public class Main {
 
 
 //        System.out.println(inOrderIterative(root));
-        System.out.println(printInRange(root,17,22));
+//        System.out.println(printInRange(root,17,22));
+        System.out.println(kthSmallest(root,4));
     }
 
     public node searchBST(node root, int k){
@@ -72,7 +73,7 @@ public class Main {
             root.left=delete(root.left,k);
         }else if(k>root.val){
             root.right=delete(root.right,k);
-        }else{ // root.val == key
+        }else{ // root.val == key (reached)
             if(root.left==null) return root.right;
             if(root.right==null) return  root.left;
 
@@ -117,7 +118,8 @@ public class Main {
         return ans;
     }
 
-    // Easy way -> inOrder Traversal & store in Array then basic 2Sum Qs
+
+    // Easy Way -> inOrder Traversal & store in Array then basic 2Sum Qs
     static boolean twoSum(node root, int k){
         boolean done1=false, done2=false;
         int val1=0, val2=0;
@@ -207,11 +209,25 @@ public class Main {
         if(h> root.val) printInRangeHelper(root.right,l,h,ans);
     }
 
+    public static int rangeSumBST(node root, int l, int h) {
+        if(root==null) return 0;
+        int ans = 0;
+
+        if(l<root.val) ans+=rangeSumBST(root.left,l,h);
+        if(root.val>=l && root.val<=h) ans+=root.val;
+        if(h>root.val) ans+=rangeSumBST(root.right,l,h);
+
+        return ans;
+    }
 
 
-    static node prev = null;
+    static node prevv = null;
     static int ans =Integer.MAX_VALUE;
     static int minAbsDiff(node root){
+        // Reset static variables for each test case
+        prevv = null;
+        ans = Integer.MAX_VALUE;
+
         minAbsBSTUtil(root);
         return ans;
     }
@@ -219,10 +235,10 @@ public class Main {
         if(root==null) return;
 
         minAbsBSTUtil(root.left);
-        if(prev!=null){
-            ans = Math.min(ans, root.val-prev.val);
+        if(prevv !=null){
+            ans = Math.min(ans, root.val- prevv.val);
         }
-        prev=root;
+        prevv =root;
         minAbsBSTUtil(root.right);
     }
 
@@ -286,6 +302,130 @@ public class Main {
             // Move right as current value is smaller than x
             return findCeilHelper(root.right, x, ans);
         }
+    }
+
+    public node increasingBST(node root){
+        if(root==null) return null;
+
+        ArrayList<Integer> ans=new ArrayList<>();
+        inOrderHelp(root,ans);
+
+        node newRoot = new node(ans.getFirst());
+        node curr=newRoot;
+
+        for(int i=1;i<ans.size();i++){
+            curr.right=new node(ans.get(i));
+            curr=curr.right;
+        }
+        return newRoot;
+
+    }
+    public void inOrderHelp(node root,ArrayList<Integer> ans){
+        if(root==null) return;
+        inOrderHelp(root.left,ans);
+        ans.add(root.val);
+        inOrderHelp(root.right,ans);
+    }
+
+    // ***  optimised solution  -->
+    private node curr; // Pointer to track rightmost node
+    public node increasingBSTop(node root) {
+        node dummy = new node(0); // Dummy node
+        curr = dummy;
+        inOrder(root);
+        return dummy.right; // Return new root
+    }
+    private void inOrder(node root) {
+        if (root == null) return;
+
+        inOrder(root.left); // Left subtree
+
+        // Process current node
+        root.left = null;  // Remove left child
+        curr.right = root; // Attach current node to right
+        curr = root;       // Move forward
+
+        inOrder(root.right); // Right subtree
+    }
+
+    public static int kthSmallest(node root, int k){
+        if(root==null) return -1;
+        ArrayList<Integer>ans = new ArrayList<>();
+        inorder(root,ans);
+        // Check if k is within valid range
+        if (k > ans.size() || k <= 0) return -1;
+        return ans.get(k-1);
+    }
+    public static void inorder(node root, ArrayList<Integer>ans){
+        if(root==null) return;
+        inorder(root.left,ans);
+        ans.add(root.val);
+        inorder(root.right,ans);
+    }
+    // optimised code --> Kth Small Element
+    public static int kthSmallestOp(node root, int k) {
+        Stack<node> st = new Stack<>();
+        node curr = root;
+        int cnt = 0;
+        while (!st.isEmpty() || curr != null ) {
+            while (curr != null) {
+                st.push(curr);
+                curr = curr.left;
+            }
+            node temp = st.pop();
+            cnt++;
+            if (cnt == k) return temp.val; // Found kth smallest element
+            curr = temp.right;
+        }
+        return -1; // If k is out of bounds
+    }
+
+    static node prev, left, mid, right;
+    public static void recoverBST(node root) {
+        prev = left = mid = right = null; // Reset global variables
+        recoverUtil(root);
+        if (left != null && right == null) { //Two adjacent
+            swap(left, mid);
+        }
+        if (left != null && right != null) { // Non adjacent
+            swap(left, right);
+        }
+    }
+    private static void swap(node x, node y) {
+        int temp = x.val;
+        x.val = y.val;
+        y.val = temp;
+    }
+    static void recoverUtil(node root) { // InOrder
+        if (root == null) return;
+        recoverUtil(root.left);
+        if (prev != null && root.val < prev.val) {
+            if (left == null) { // 1 anomaly
+                left = prev;
+                mid = root;
+            } else { // 2 anomaly
+                right = root;
+            }
+        }
+        prev = root; // Update prev for next comparison
+        recoverUtil(root.right);
+    }
+
+    public static int canRepresentBST(int[] arr) {
+        Stack<Integer> st = new Stack<>();
+        int lastPopped = Integer.MIN_VALUE;  // Tracks the last popped element
+        for (int e : arr) {
+            // If we find a smaller element in the right subtree, it's not a BST
+            if (e < lastPopped) {
+                return 0;
+            }
+            // Pop from stack until we find the correct parent for arr[i]
+            while (!st.isEmpty() && e > st.peek()) {
+                lastPopped = st.pop();
+            }
+            st.push(e);
+        }
+        return 1; // true
     }
 
 
