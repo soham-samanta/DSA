@@ -97,6 +97,7 @@ public class Main {
     private boolean validBSThelper(node root, int min, int max) {
         if(root==null) return true;
         if(root.val<=min || root.val>=max) return false;
+
         return validBSThelper(root.left,min,root.val)
                 && validBSThelper(root.right, root.val, max);
     }
@@ -118,9 +119,8 @@ public class Main {
         return ans;
     }
 
-
     // Easy Way -> inOrder Traversal & store in Array then basic 2Sum Qs
-    static boolean twoSum(node root, int k){
+    static boolean twoSumIV(node root, int k){
         boolean done1=false, done2=false;
         int val1=0, val2=0;
         node curr1=root, curr2=root;
@@ -197,13 +197,15 @@ public class Main {
         return root;
     }
 
+    // -- AVL --- Not Coded
+
     static ArrayList<Integer> printInRange(node root, int l, int h){
         ArrayList<Integer>ans = new ArrayList<>();
         printInRangeHelper(root,l,h,ans);
         return ans;
     }
-    static void printInRangeHelper(node root, int l, int h,ArrayList<Integer>ans){
-        if(root==null) return;
+    static void printInRangeHelper(node root, int l, int h,ArrayList<Integer>ans){ // low,high
+        if(root==null) return; // inOrder Code
         if(l< root.val) printInRangeHelper(root.left,l,h,ans);
         if(root.val>l && root.val<h) ans.add(root.val);
         if(h> root.val) printInRangeHelper(root.right,l,h,ans);
@@ -231,7 +233,7 @@ public class Main {
         minAbsBSTUtil(root);
         return ans;
     }
-    static void minAbsBSTUtil(node root){
+    static void minAbsBSTUtil(node root){ // inOrder
         if(root==null) return;
 
         minAbsBSTUtil(root.left);
@@ -240,6 +242,60 @@ public class Main {
         }
         prevv =root;
         minAbsBSTUtil(root.right);
+    }
+
+
+    static node prev, left, mid, right;
+    public static void recoverBST(node root) {
+        prev = left = mid = right = null; // Reset global variables
+
+        recoverUtil(root);
+        if (left != null && right != null) { // Non adjacent
+            swap(left, right);
+        }
+        if (left != null && right == null) { //Two adjacent
+            swap(left, mid);
+        }
+    }
+    private static void swap(node x, node y) {
+        int temp = x.val;
+        x.val = y.val;
+        y.val = temp;
+    }
+    static void recoverUtil(node root) { // InOrder
+        if (root == null) return;
+
+        recoverUtil(root.left);
+        if (prev != null && root.val < prev.val) {
+            if (left == null) { // 1 anomaly
+                left = prev;
+                mid = root;
+            } else { // 2 anomaly
+                right = root;
+            }
+        }
+        prev = root; // Update prev for next comparison
+        recoverUtil(root.right);
+    }
+
+
+    // ---- HomeWork + Assignment
+
+    public static int canRepresentBST(int[] arr) {
+        Stack<Integer> st = new Stack<>();
+        int lastPopped = Integer.MIN_VALUE;  // Tracks the last popped element
+        for (int e : arr) {
+            // If we find a smaller element in the right subtree, it's not a BST
+            if (e < lastPopped) {
+                return 0;
+            }
+            // Pop from stack until we find the correct parent for arr[i]
+            while (!st.isEmpty() && e > st.peek()) {
+                lastPopped = st.pop();
+            }
+            st.push(e);
+        }
+        return 1; // true
     }
 
     public static int findFloor(node root, int x) {
@@ -273,7 +329,7 @@ public class Main {
     }
 
 
-
+/*
     public static int findFloorRec(node root, int x) {
         return findFloorHelper(root, x, -1);
     }
@@ -303,6 +359,8 @@ public class Main {
             return findCeilHelper(root.right, x, ans);
         }
     }
+
+*/
 
     public node increasingBST(node root){
         if(root==null) return null;
@@ -352,8 +410,10 @@ public class Main {
         if(root==null) return -1;
         ArrayList<Integer>ans = new ArrayList<>();
         inorder(root,ans);
+
         // Check if k is within valid range
         if (k > ans.size() || k <= 0) return -1;
+
         return ans.get(k-1);
     }
     public static void inorder(node root, ArrayList<Integer>ans){
@@ -362,6 +422,7 @@ public class Main {
         ans.add(root.val);
         inorder(root.right,ans);
     }
+
     // optimised code --> Kth Small Element
     public static int kthSmallestOp(node root, int k) {
         Stack<node> st = new Stack<>();
@@ -380,53 +441,9 @@ public class Main {
         return -1; // If k is out of bounds
     }
 
-    static node prev, left, mid, right;
-    public static void recoverBST(node root) {
-        prev = left = mid = right = null; // Reset global variables
-        recoverUtil(root);
-        if (left != null && right == null) { //Two adjacent
-            swap(left, mid);
-        }
-        if (left != null && right != null) { // Non adjacent
-            swap(left, right);
-        }
-    }
-    private static void swap(node x, node y) {
-        int temp = x.val;
-        x.val = y.val;
-        y.val = temp;
-    }
-    static void recoverUtil(node root) { // InOrder
-        if (root == null) return;
-        recoverUtil(root.left);
-        if (prev != null && root.val < prev.val) {
-            if (left == null) { // 1 anomaly
-                left = prev;
-                mid = root;
-            } else { // 2 anomaly
-                right = root;
-            }
-        }
-        prev = root; // Update prev for next comparison
-        recoverUtil(root.right);
-    }
 
-    public static int canRepresentBST(int[] arr) {
-        Stack<Integer> st = new Stack<>();
-        int lastPopped = Integer.MIN_VALUE;  // Tracks the last popped element
-        for (int e : arr) {
-            // If we find a smaller element in the right subtree, it's not a BST
-            if (e < lastPopped) {
-                return 0;
-            }
-            // Pop from stack until we find the correct parent for arr[i]
-            while (!st.isEmpty() && e > st.peek()) {
-                lastPopped = st.pop();
-            }
-            st.push(e);
-        }
-        return 1; // true
-    }
+
+
 
 
 
