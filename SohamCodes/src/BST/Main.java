@@ -281,13 +281,14 @@ public class Main {
 
     // ---- HomeWork + Assignment
 
-    public static int canRepresentBST(int[] arr) {
+    /*imp*/
+    public static boolean canRepresentBST(int[] arr) {
         Stack<Integer> st = new Stack<>();
         int lastPopped = Integer.MIN_VALUE;  // Tracks the last popped element
         for (int e : arr) {
             // If we find a smaller element in the right subtree, it's not a BST
             if (e < lastPopped) {
-                return 0;
+                return false;
             }
             // Pop from stack until we find the correct parent for arr[i]
             while (!st.isEmpty() && e > st.peek()) {
@@ -295,7 +296,7 @@ public class Main {
             }
             st.push(e);
         }
-        return 1; // true
+        return true;
     }
 
     public static int findFloor(node root, int x) {
@@ -427,14 +428,14 @@ public class Main {
     public static int kthSmallestOp(node root, int k) {
         Stack<node> st = new Stack<>();
         node curr = root;
-        int cnt = 0;
+        int cnt = 0; //
         while (!st.isEmpty() || curr != null ) {
             while (curr != null) {
                 st.push(curr);
                 curr = curr.left;
             }
             node temp = st.pop();
-            cnt++;
+            cnt++; //
             if (cnt == k) return temp.val; // Found kth smallest element
             curr = temp.right;
         }
