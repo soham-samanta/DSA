@@ -24,11 +24,11 @@ class node{
 }
 public class LinkList {
     public static void main(String[] args) {
-        node head =new node(40);
-        node n1 = new node(20);
-        node n2 = new node(50);
-        node n3 = new node(15);
-        node n4 = new node(75);
+        node head =new node(1);
+        node n1 = new node(2);
+        node n2 = new node(3);
+        node n3 = new node(4);
+        node n4 = new node(5);
         head.next=n1;
         n1.next=n2;
         n2.next=n3;
@@ -50,8 +50,10 @@ public class LinkList {
 //        node revhead = revRecur(head);
 //        print(revhead);
 
-        System.out.println(kthNode(head,0));
+//        System.out.println(kthNode(head,0));
 
+        rotateRight(head,2);
+        print(head);
 
     }
 
@@ -538,7 +540,6 @@ public class LinkList {
         node evenHead = null;  // Will store even-positioned nodes
 
         node curr = head;
-        int pos = 1;
 
         // Step 1: Extract even-positioned nodes and push them to front (reverse)
         while (curr != null && curr.next != null) {
@@ -549,7 +550,6 @@ public class LinkList {
             evenHead = evenNode;
 
             curr = curr.next; // Move two steps
-            pos += 2;
         }
 
         // Step 2: Merge reversed even list back into even positions
@@ -568,8 +568,141 @@ public class LinkList {
     }
 
 
+    // *** imp
+    public node evenReverseSimple(node head) {
+
+        node dummy = new node(0);
+
+        node curr1 = head;
+        node curr2 = dummy;
+
+        while(curr1 != null){
+            node nxt = curr1.next;
+            if(nxt != null){
+                curr1.next = nxt.next;
+                curr2.next = nxt;
+                curr2 = curr2.next;
+                nxt.next = null;
+            }
+            curr1 = curr1.next;
+        }
+
+        node B = rev(dummy.next);
+
+        curr1 = head;
+        curr2 = B;
+        dummy.next = null;
+        node curr = dummy;
+        boolean flag = true;
+
+        while(curr1 != null && curr2 != null){
+            curr.next = curr1;
+            curr = curr.next;
+            curr1 = curr1.next;
+            curr.next = curr2;
+            curr = curr.next;
+            curr2 = curr2.next;
+        }
+
+        if(curr1 != null){
+            curr.next = curr1;
+        }
+
+        if(curr2 != null){
+            curr.next = curr2;
+        }
+
+        return dummy.next;
+    }
+
+    public static node revII(node head, int l, int r){
+        if(head == null || l == r) return head;
+        node prev = null;
+        node curr = head;
+        for(int i=0;curr!=null && i<l-1;i++){
+            prev=curr;
+            curr=curr.next;
+        }
+        node nxt=curr.next;
+        node last=prev;
+        node newEnd=curr;
+        for(int i=0;curr!=null && i<(r-l+1);i++){
+            curr.next=prev;
+            prev=curr;
+            curr=nxt;
+            if(nxt!=null){
+                nxt=nxt.next;
+            }
+        }
+
+        if(last!=null){
+            last.next=prev;
+        }else{
+            head=prev;
+        }
+        newEnd.next=curr;
+
+        return head;
+    }
+
+    public static node rotateRight(node head, int x){
+        if(head==null || head.next==null || x<=0) return head;
+        int l=1;
+        node temp=head;
+        while(temp.next!=null){
+            temp=temp.next;
+            l++;
+        }
+        temp.next=head;
+        node last=head;
+        int skip = l-(x%l);
+        for (int i = 0; i < skip-1; i++) {
+            last=last.next;
+        }
+        head=last.next;
+        last.next=null;
+
+        return head;
+    }
+
+
+    public node sortList(node head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        node mid = getMid(head);
+        node left = sortList(head);
+        node right = sortList(mid);
+        return merge(left, right);
+    }
+    node merge(node l1, node l2) {
+        node dummyHead = new node(-1);
+        node tail = dummyHead;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                tail.next = l1;
+                l1 = l1.next;
+                tail = tail.next;
+            } else {
+                tail.next = l2;
+                l2 = l2.next;
+                tail = tail.next;
+            }
+        }
+        tail.next = (l1 != null) ? l1 : l2;
+        return dummyHead.next;
+    }
+
+
+
+
+
 
 
 }
+
+
+
+
 
 
