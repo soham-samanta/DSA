@@ -34,7 +34,7 @@ public class LinkList {
         n2.next=n3;
         n3.next=n4;
 
-//        insert(head,2,100);
+        insert(head,100,40);
         print(head);
         System.out.println();
 //        delete(head,2);
@@ -66,34 +66,40 @@ public class LinkList {
         System.out.print("null");
     }
 
-    public static node insert(node head, int pos, int x){
+    static node insert(node head, int x, int pos){
         node newNode = new node(x);
-
-        if(pos==0){
-            newNode.next=head;
+        if (pos == 0) {
+            newNode.next = head;
             return newNode;
         }
+        if (head == null) return null;
 
-        node curr=head;
-
-        for (int i = 0; i < pos-1; i++) {
-            curr=curr.next;
+        node temp = head;
+        for (int i = 0; i < pos - 1; i++) {
+            if (temp == null) throw new RuntimeException("Position is out of bound");
+            temp = temp.next;
         }
-        newNode.next=curr.next;
-        curr.next=newNode;
+
+        newNode.next = temp.next;
+        temp.next = newNode;
 
         return head;
     }
 
     public static node delete(node head, int pos){
-        node curr=head;
-        if(pos==0){
-            return head.next;
-        }
+        if (pos < 0) throw new RuntimeException("Invalid position");
+        if(pos==0) return head.next;
+
+        if(head==null) return null;
+        node curr = head;
         for (int i = 0; i < pos-1; i++) {
+            if (curr == null || curr.next == null) throw new RuntimeException("Position is out of bound");
             curr=curr.next;
         }
-        curr.next=curr.next.next;
+        if (curr.next == null) {
+            throw new RuntimeException("Position is out of bound");
+        }
+        curr.next = curr.next.next;
         return head;
     }
 
@@ -147,6 +153,7 @@ public class LinkList {
     public static node revRecur(node head){
         if(head==null || head.next==null) return head;
         node headOfSubProb = revRecur(head.next);
+
         head.next.next=head; // heads next --(-- next node -> head
         head.next=null;
         return headOfSubProb;
@@ -237,26 +244,22 @@ public class LinkList {
         return head;
     }
 
-    public static node reorder(node head){
+    public static node reorder(node head){ // easy
         if(head==null || head.next==null) return head;
-
         node mid = getMid(head);
-        node hf=head;
-        node hs=rev(mid);
+        node l2 = rev(mid);
+        mid.next=null;
+        node l1=head;
 
-        while(hs!=null || hs.next!=null){
-            node t1=hf.next;
-            hf.next=hs;
-            hf=t1;
+        while(l1!=null && l2!=null){
+            node p1=l1.next;
+            node p2=l2.next;
 
-            node t2=hs.next;
-            hs.next=hf;
-            hs=t2;
+            l1.next = l2;
+            l2.next=p1;
 
-
-        }
-        if(hf!=null){
-            hf.next=null;
+            l1=p1;
+            l2=p2;
         }
         return head;
     }
@@ -265,21 +268,22 @@ public class LinkList {
         if(head==null || head.next==null) return head;
         node bh=new node(0);
         node ah=new node(0);
-        node c1=bh;
-        node c2=ah;
+
+        node a=bh;
+        node b=ah;
 
         while(head!=null){
             if(head.val<x){
-                c1.next=head;
-                c1=c1.next;
+                a.next=head;
+                a=a.next;
             }else{
-                c2.next=head;
-                c2=c2.next;
+                b.next=head;
+                b=b.next;
             }
             head=head.next;
         }
-        c2.next=null;
-        c1.next=ah.next;
+        b.next=null;
+        a.next=ah.next;
         return bh.next;
     }
 
@@ -318,6 +322,7 @@ public class LinkList {
         return head;
     }
 
+    /*** Important ***/
     static int longestPalindrome(node head){
         if(head==null) return 0;
         if(head.next==null) return 1;
@@ -328,9 +333,9 @@ public class LinkList {
             node nxt=curr.next;
             curr.next=prev;
             int cntIfCenter = cntCommon(prev,nxt);
-            int lenIfCenter = cntIfCenter*2+1;
+            int lenIfCenter = cntIfCenter*2+1; //center 83138
             int cntIfNotCenter = cntCommon(curr,nxt);
-            int lenIfNotCenter = cntIfNotCenter*2;
+            int lenIfNotCenter = cntIfNotCenter*2; // 648846
 
             int lenFinal = Math.max(lenIfCenter,lenIfNotCenter);
             ans = Math.max(ans,lenFinal);
@@ -355,8 +360,8 @@ public class LinkList {
     }
 
 
-    // homework
-    public static int kthNode(node head, int b){
+    // homework ---------------------------
+    public static int kthNodeFromMid(node head, int b){
         int n = len(head);
         int midN = (n/2)+1;
         if(b>=midN){
@@ -388,8 +393,8 @@ public class LinkList {
         return null;
     }
 
-    // Assignment
-    public node sortBinaryList(node head){
+    // Assignment ----------------------------------
+    public node sortBinaryList(node head){  // only 0s & 1s
         int cnt0 = 0;
         node curr=head;
         while(curr!=null){
@@ -460,23 +465,7 @@ public class LinkList {
         return -1;
     }
 
-    public node getIntersectionNodeOP(node a, node b) { //not OP - just other way
-        Set<node> set = new HashSet<>();
-        node p1 = a;
-        while(p1 != null){
-            set.add(p1);
-            p1 = p1.next;
-        }
-        node p2 = b;
-        while(p2 != null){
-            if(set.contains(p2))
-                return p2;
-            p2 = p2.next;
-        }
-        return null;
-    }
-
-    public static node mergeTwoLists(node a, node b){
+    public static node mergeTwoSortedLists(node a, node b){
         if(a==null) return b;
         if(b==null) return a;
 
@@ -533,7 +522,7 @@ public class LinkList {
         return dummy.next;
     }
 
-
+    /*** IMPORTANT ***/
     public node evenReverse(node head) {
         if (head == null || head.next == null) return head;
 
@@ -566,8 +555,6 @@ public class LinkList {
 
         return head;
     }
-
-
     // *** imp
     public node evenReverseSimple(node head) {
 
@@ -645,6 +632,56 @@ public class LinkList {
         return head;
     }
 
+    public static node reverseAlternateKNodes(node head, int k) {
+        if (head == null || k <= 0) return head;
+
+        node curr = head;
+        node prevTail = null;
+        node newHead = null;
+
+        boolean flag = true;
+
+        while (curr != null) {
+            node segmentStart = curr;
+            node prev = null;
+            int count = 0;
+
+            // Process k nodes
+            while (curr != null && count < k) {
+                node nxt = curr.next;
+                if (flag) {
+                    curr.next = prev; // Reverse
+                    prev = curr;
+                    curr = nxt;
+                } else {
+                    prev = curr; // Just advance without reversing
+                    curr = nxt;
+                }
+                count++;
+            }
+
+            if (flag) {
+                if (newHead == null) {
+                    newHead = prev; // First reversed segment becomes new head
+                }
+                if (prevTail != null) {
+                    prevTail.next = prev; // Connect previous part to current reversed
+                }
+                prevTail = segmentStart; // segmentStart becomes tail after reversing
+            } else {
+                if (prevTail != null) {
+                    prevTail.next = segmentStart; // Connect previous reversed part to skipped segment
+                }
+                prevTail = prev; // last node of skipped segment
+            }
+
+            flag = !flag; // Toggle for next segment
+        }
+
+        return newHead != null ? newHead : head;
+    }
+
+
     public static node rotateRight(node head, int x){
         if(head==null || head.next==null || x<=0) return head;
         int l=1;
@@ -677,19 +714,19 @@ public class LinkList {
     }
     node merge(node l1, node l2) {
         node dummyHead = new node(-1);
-        node tail = dummyHead;
+        node temp = dummyHead;
         while (l1 != null && l2 != null) {
             if (l1.val < l2.val) {
-                tail.next = l1;
+                temp.next = l1;
                 l1 = l1.next;
-                tail = tail.next;
+                temp = temp.next;
             } else {
-                tail.next = l2;
+                temp.next = l2;
                 l2 = l2.next;
-                tail = tail.next;
+                temp = temp.next;
             }
         }
-        tail.next = (l1 != null) ? l1 : l2;
+        temp.next = (l1 != null) ? l1 : l2;
         return dummyHead.next;
     }
 
