@@ -16,7 +16,14 @@ public class Loops {
 //        System.out.println(isPrime(4));
 //        printPrime(20);
 //        printPrimeFactor(10);
-        System.out.println(isArmstrong(371));
+//        System.out.println(isArmstrong(371));
+//        printArmstrong(1000);
+
+//        System.out.println(perfectNo(7));
+//        printPerfectNo(100);
+//        System.out.println(fact(4));
+//        System.out.println(isStrongNo(145));
+//        printStrongNo(1,999999999);
 
 
 
@@ -130,7 +137,7 @@ public class Loops {
     }
 
 
-    /** Loops 3 */
+    /** Loops 3 */    // Remaining - LCM & HCF
     static boolean isArmstrong(int n) {
         int cnt = 0;
         // Count digits
@@ -149,6 +156,71 @@ public class Loops {
         }
         return n == armstrongSum;
     }
+
+    static void printArmstrong(int n) {
+        for (int i = 1; i <= n; i++) {
+            if (isArmstrong(i)) {
+                System.out.print(i + " ");
+            }
+        }
+    }
+
+
+    /** Loops 4 */
+    static boolean perfectNo(int n){
+        int ans=0;
+        for (int i = 1; i < n; i++) {
+            if(n%i==0){
+                ans+=i;
+            }
+        }
+        return ans==n;
+    }
+
+    static void printPerfectNo(int n){
+        for (int i = 1; i <= n ; i++) {
+            if(perfectNo(i)){
+                System.out.print(i+" ");
+            }
+        }
+    }
+
+    static boolean isStrongNo(int n){
+        int temp =n;
+        int ans=0;
+        while(n>0){
+            int last = n%10;
+            ans+=fact(last);
+            n/=10;
+        }
+//        System.out.println(ans);
+        return ans == temp;
+    }
+    static int fact(int n){
+        int fact=1;
+        for (int i = 1; i <= n ; i++) {
+            fact*=i;
+        }
+        return fact;
+    }
+
+    static void printStrongNo(int st, int end){
+        if (st <= 0) {
+            throw new IllegalArgumentException("Input must be greater than 0");
+        }
+
+        boolean flg=false;
+        for (int i = st; i <= end; i++) {
+            if(isStrongNo(i)){
+                System.out.print(i+" ");
+                flg=true;
+            }
+            if(!flg) throw new RuntimeException("No Strong Number found in the given range");
+        }
+    }
+
+
+
 
 
 
