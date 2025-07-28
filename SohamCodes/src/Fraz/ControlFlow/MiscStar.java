@@ -5,7 +5,8 @@ public class MiscStar {
 //        p1singleLoop(5);
 //        p2(5);
 //        p3(5);
-        p4(5);
+//        p4(5);
+        p5(5);
     }
 
     static void p1(int n){
@@ -108,6 +109,30 @@ public class MiscStar {
     }
 
     static void p5(int n){
+        for (int i = 1; i <= n ; i++) {
+            for (int j = 1; j <= n ; j++) {
+                if(
+                    (i==1 || i==n)  && (j!=1 && j!=n) ||
+                    (j==1 || j==n) && (i!=1 && i!=n) )
+                {
+                    System.out.print("*");
+                }else{
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+        }
+        for (int i = 1; i <= n-1 ; i++) {
+            for (int j = 1; j <= n ; j++) {
+                if( (j==1 || j==n) && (i!=n-1) ||
+                        (i==n-1) && (j!=1 && j!=n) ){
+                    System.out.print("*");
+                }else{
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+        }
 
     }
 
