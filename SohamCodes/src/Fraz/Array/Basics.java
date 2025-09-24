@@ -5,10 +5,11 @@ import java.util.*;
 public class Basics {
     public static void main(String[] args) {
         int[]arr={1,2,3,4,5,6};
+        System.out.println(Arrays.toString(arr));
 
 //        print(arr);
 //        System.out.println(Arrays.toString(rev(arr)));
-//        System.out.println(Arrays.toString(printAlternate(arr)));
+        System.out.println(Arrays.toString(printAlternate(arr)));
 //        System.out.println(Arrays.toString(dup(arr)));
 //        sumProd(arr);
 //        System.out.println(isSorted(arr));
@@ -20,10 +21,7 @@ public class Basics {
 //        System.out.println(min2nd(arr));
 //        System.out.println(Arrays.toString(del(arr,3)));
 
-        String a = new String("Soham");
-        String b = new String("Soham");
-        System.out.println(a==b);
-        System.out.println(a.equals(b));
+
 
     }
 
@@ -71,8 +69,8 @@ public class Basics {
         for(int e:arr){
             map.put(e,map.getOrDefault(e,0)+1);
         }
-        for(Map.Entry<Integer,Integer>entry:map.entrySet()){
-            System.out.println(entry.getKey()+" - "+entry.getValue()+" times");
+        for(Map.Entry<Integer,Integer>e:map.entrySet()){
+            System.out.println(e.getKey()+" - "+e.getValue()+" times");
         }
     }
 
@@ -83,8 +81,8 @@ public class Basics {
         }
         int uniqueCnt=0;
         int dupCnt=0;
-        for(Map.Entry<Integer,Integer>entry:map.entrySet()){
-            if(entry.getValue()>1) dupCnt++;
+        for(Map.Entry<Integer,Integer>e:map.entrySet()){
+            if(e.getValue()>1) dupCnt++;
             else uniqueCnt++;
         }
 //        for(int e:map.values()){
@@ -134,12 +132,12 @@ public class Basics {
     static int max2nd(int[]arr){ // 5,2,3,3,4,1
         int max=Integer.MIN_VALUE;
         int secondMax = Integer.MIN_VALUE;
-        for (int i = 0; i < arr.length; i++) {
-            if(arr[i]>max){
-                secondMax=max;
-                max=arr[i];
-            }else if(arr[i]>secondMax && arr[i]<max){
-                secondMax=arr[i];
+        for (int e : arr) {
+            if (e > max) {
+                secondMax = max;
+                max = e;
+            } else if (e > secondMax && e < max) {
+                secondMax = e;
             }
         }
         return secondMax;

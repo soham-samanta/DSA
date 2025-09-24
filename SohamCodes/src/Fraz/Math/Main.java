@@ -82,6 +82,7 @@ public class Main {
     static boolean isArmstrong(int n){
         int storeN = n;
         int cnt=String.valueOf(n).length();
+
         int ans = 0;
         while(n>0){
             int last = n%10;
@@ -108,7 +109,7 @@ public class Main {
         }
         return cnt;
     }
-    static int trailingZeroesOp(int n){
+    static int trailingZeroesOp(int n){ // 2 & 5 are factor of 10
         int cnt=0;
         for (int i = 5; n/i >= 1 ; i*=5) {
             cnt+=n/i;
