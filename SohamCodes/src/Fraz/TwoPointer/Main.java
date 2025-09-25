@@ -380,6 +380,29 @@ public class Main {
         return new int[]{};
     }
 
+    public List<List<Integer>> threeSum(int[] arr) {
+        Arrays.sort(arr);
+        List<List<Integer>> ans = new ArrayList<>();
+        int n = arr.length;
+        // Loop through the array to pick the first number
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && arr[i] == arr[i - 1]) continue; // Skip duplicates
+            Set<Integer> set = new HashSet<>();
+            // Loop to pick the second number
+            for (int j = i + 1; j < n; j++) {
+                int complement = -arr[i] - arr[j]; // Calculate the complement
+                // If complement is found in the set, add the triplet to result
+                if (set.contains(complement)) {
+                    ans.add(Arrays.asList(arr[i], arr[j], complement));
+                    // Skip duplicate pairs
+                    while (j + 1 < n && arr[j] == arr[j + 1]) j++;
+                }
+                set.add(arr[j]); // Add the second number to the set
+            }
+        }
+        return ans;
+    }
+
 
     static int[] sortArrayByParityI(int[] arr) {
         int i = 0, j = arr.length - 1;
