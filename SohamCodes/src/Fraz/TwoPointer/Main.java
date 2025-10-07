@@ -45,8 +45,13 @@ public class Main {
 
 //        System.out.println(validPalindrome2("deeee"));
 
-        System.out.println(Arrays.toString(shortestToChar("loveleetcode",'e')));
+//        System.out.println(Arrays.toString(shortestToChar("loveleetcode",'e')));
 
+        int[] arr = new int[]{1, 2, 2, 1, 1, 0};
+        System.out.println(Arrays.toString(ops(arr)));
+
+//        int[] arr1 = new int[]{1, 2, 2, 1, 1, 0};
+//        int[] arr2 = new int[]{1, 2, 2, 1, 1, 0};
 
     }
 
@@ -71,6 +76,61 @@ public class Main {
             arr[arr.length - 1 - i] = temp;
         }
         System.out.println(Arrays.toString(arr));
+    }
+
+    public String reverseWordsIII(String s) {
+        String[] arr = s.split(" "); // split sentence by spaces
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(new StringBuilder(arr[i]).reverse()); // reverse each word
+            if (i < arr.length - 1) {
+                sb.append(" "); // add space between words
+            }
+        }
+        return sb.toString();
+    }
+    public String reverseWordsIII2ptr(String s) {
+        char[] chars = s.toCharArray();
+        int n = chars.length;
+        int i = 0;
+        int j = 1;
+        // Main loop to process each word in the string
+        while(i < n) {
+            // Find the end of current word by looking for space or end of string
+            while(j < n && chars[j] != ' ') j++;
+
+            // Set up pointers for reversing the current word
+            // a starts at beginning of word, b starts at end of word
+            int a = i, b = j-1;
+
+            // Reverse the current word using two-pointer technique
+            while(a < b) {
+                // Swap characters from both ends moving toward center
+                char temp = chars[a];
+                chars[a] = chars[b];
+                chars[b] = temp;
+                // Move left pointer right and right pointer left
+                a++;b--;
+            }
+            i = j+1;
+            j = i+1;
+        }
+        // Handle the last word if string doesn't end with space
+        // Set j to string length to mark end boundary
+        j = n;
+        // Set up pointers for the last word
+        int a = i, b = j-1;
+        // Reverse the last word using same technique
+        while(a < b) {
+            // Swap characters from both ends
+            char temp = chars[a];
+            chars[a] = chars[b];
+            chars[b] = temp;
+            // Move pointers toward center
+            a++;b--;
+        }
+        // Convert character array back to string and return
+        return new String(chars);
     }
 
     static boolean hasPairSum(int[] arr, int k) { // 1 3 5 6 7 9  -> 3,5 = 8
@@ -381,26 +441,92 @@ public class Main {
     }
 
     public List<List<Integer>> threeSum(int[] arr) {
+        int n=arr.length;
+        List<List<Integer>> res = new ArrayList<>();
         Arrays.sort(arr);
-        List<List<Integer>> ans = new ArrayList<>();
-        int n = arr.length;
-        // Loop through the array to pick the first number
         for (int i = 0; i < n - 2; i++) {
             if (i > 0 && arr[i] == arr[i - 1]) continue; // Skip duplicates
-            Set<Integer> set = new HashSet<>();
-            // Loop to pick the second number
-            for (int j = i + 1; j < n; j++) {
-                int complement = -arr[i] - arr[j]; // Calculate the complement
-                // If complement is found in the set, add the triplet to result
-                if (set.contains(complement)) {
-                    ans.add(Arrays.asList(arr[i], arr[j], complement));
-                    // Skip duplicate pairs
-                    while (j + 1 < n && arr[j] == arr[j + 1]) j++;
+
+            int l = i + 1, r = n - 1;
+            while (l < r) {
+                int total = arr[i] + arr[l] + arr[r];
+                if (total == 0) {
+                    res.add(Arrays.asList(arr[i], arr[l], arr[r]));
+                    while (l < r && arr[l] == arr[l + 1]) l++;
+                    while (l < r && arr[r] == arr[r - 1]) r--;
+                    l++;r--;
+                } else if (total < 0) {
+                    l++;
+                } else {
+                    r--;
                 }
-                set.add(arr[j]); // Add the second number to the set
             }
         }
-        return ans;
+        return res;
+    }
+
+    public List<List<Integer>> fourSum(int[] arr, int target) {
+        Arrays.sort(arr); // Sort the array
+        List<List<Integer>> res = new ArrayList<>();
+        int n = arr.length;
+
+        for (int i = 0; i < n - 3; i++) {
+            if (i > 0 && arr[i] == arr[i - 1]) continue; // Skip duplicate 'i'
+            for (int j = i + 1; j < n - 2; j++) {
+                if (j > i + 1 && arr[j] == arr[j - 1]) continue; // Skip duplicate 'j'
+
+                int l = j + 1, r = n - 1;
+                while (l < r) {
+                    long sum = (long) arr[i] + arr[j] + arr[l] + arr[r];
+                    // use long to avoid overflow
+
+                    if (sum == target) {
+                        res.add(Arrays.asList(arr[i], arr[j], arr[l], arr[r]));
+
+                        // Skip duplicate 'l' and 'r'
+                        while (l < r && arr[l] == arr[l + 1]) l++;
+                        while (l < r && arr[r] == arr[r - 1]) r--;
+
+                        l++;r--;
+                    } else if (sum < target) {
+                        l++; // Need bigger sum
+                    } else {
+                        r--; // Need smaller sum
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    public int threeSumClosest(int[] arr, int k) {
+        Arrays.sort(arr);
+        int n = arr.length;
+        int closestSum = arr[0] + arr[1] + arr[2]; // Initialize with the first triplet
+
+        for (int i = 0; i < n - 2; i++) {
+            int l = i + 1, r = n - 1;
+
+            while (l < r) {
+                int sum = arr[i] + arr[l] + arr[r];
+
+                // If this sum is closer to target, update closestSum
+                if (Math.abs(sum - k) < Math.abs(closestSum - k)) {
+                    closestSum = sum;
+                }
+
+                // Move pointers based on comparison
+                if (sum < k) {
+                    l++; // Need a bigger sum
+                } else if (sum > k) {
+                    r--; // Need a smaller sum
+                } else {
+                    // Exact match found → the best possible case
+                    return sum;
+                }
+            }
+        }
+        return closestSum;
     }
 
 
@@ -679,7 +805,61 @@ public class Main {
 //        }
     }
 
+    public static void sortColors(int[] arr) {
+        int low = 0, mid = 0, hi = arr.length - 1;
+        while (mid <= hi) {
+            // If the element is 0, swap it to the start position
+            if (arr[mid] == 0) {
+                // Step 4: Swap and move pointers for 0s
+                int temp = arr[low];
+                arr[low] = arr[mid];
+                arr[mid] = temp;
+                low++;mid++;
+            } else if (arr[mid] == 1) {
+                mid++;
+            } else { // If the element is 2, swap it to the end position
+                // Step 6: Swap and move end pointer for 2s
+                int temp = arr[mid];
+                arr[mid] = arr[hi];
+                arr[hi] = temp;
+                hi--;
+            }
+        }
+    }
 
+    static int[] rearrangeArray(int[] arr){
+        int[]ans=new int[arr.length];
+        int pos=0,neg=1;
+        for(int e:arr){
+            if(e>0){
+                ans[pos]=e;
+                pos+=2;
+            }else{
+                ans[neg]=e;
+                neg+=2;
+            }
+        }
+        return ans;
+    }
+
+    static int[] ops(int[]arr){
+        for (int i = 0; i <= arr.length-2; i++) {
+            if(arr[i]==arr[i+1]){
+                arr[i]*=2;
+                arr[i+1]=0;
+            }
+        }
+        int pos = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != 0) {
+                arr[pos++] = arr[i];
+            }
+        }
+        while (pos < arr.length) {
+            arr[pos++] = 0;
+        }
+        return arr;
+    }
 
 
 

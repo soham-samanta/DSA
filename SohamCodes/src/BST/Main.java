@@ -363,28 +363,28 @@ public class Main {
 
 */
 
-    public node increasingBST(node root){
-        if(root==null) return null;
-
-        ArrayList<Integer> ans=new ArrayList<>();
-        inOrderHelp(root,ans);
-
-        node newRoot = new node(ans.getFirst());
-        node curr=newRoot;
-
-        for(int i=1;i<ans.size();i++){
-            curr.right=new node(ans.get(i));
-            curr=curr.right;
-        }
-        return newRoot;
-
-    }
-    public void inOrderHelp(node root,ArrayList<Integer> ans){
-        if(root==null) return;
-        inOrderHelp(root.left,ans);
-        ans.add(root.val);
-        inOrderHelp(root.right,ans);
-    }
+//    public node increasingBST(node root){
+//        if(root==null) return null;
+//
+//        ArrayList<Integer> ans=new ArrayList<>();
+//        inOrderHelp(root,ans);
+//
+//        node newRoot = new node(ans.getFirst());
+//        node curr=newRoot;
+//
+//        for(int i=1;i<ans.size();i++){
+//            curr.right=new node(ans.get(i));
+//            curr=curr.right;
+//        }
+//        return newRoot;
+//
+//    }
+//    public void inOrderHelp(node root,ArrayList<Integer> ans){
+//        if(root==null) return;
+//        inOrderHelp(root.left,ans);
+//        ans.add(root.val);
+//        inOrderHelp(root.right,ans);
+//    }
 
     // ***  optimised solution  -->
     private node curr; // Pointer to track rightmost node

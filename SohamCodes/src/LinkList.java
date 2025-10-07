@@ -248,7 +248,7 @@ public class LinkList {
         if(head==null || head.next==null) return head;
         node mid = getMid(head);
         node l2 = rev(mid);
-        mid.next=null;
+        mid.next=null; // split the list
         node l1=head;
 
         while(l1!=null && l2!=null){
@@ -681,6 +681,41 @@ public class LinkList {
         return newHead != null ? newHead : head;
     }
 
+    public node revAlter(node head,int k){
+        if(k<=1 || head==null){
+            return head;
+        }
+        node prev=null;
+        node curr=head;
+//        int length=getLength(head);
+//        int count=length/k;
+        while (curr != null) {
+            node last = prev;
+            node newEnd = curr;
+            node nxt = curr.next;
+            for (int i = 0; curr != null && i < k; i++) {
+                curr.next = prev;
+                prev = curr;
+                curr = nxt;
+                if (nxt != null) {
+                    nxt = nxt.next;
+                }
+            }
+            if (last != null) {
+                last.next = prev;
+            } else {
+                head = prev;
+            }
+            //skip k nodes
+            newEnd.next = curr;
+            for (int i = 0; curr != null && i < k; i++) {
+                prev = curr;
+                curr = curr.next;
+            }
+        }
+        return head;
+    }
+
 
     public static node rotateRight(node head, int x){
         if(head==null || head.next==null || x<=0) return head;
@@ -730,6 +765,52 @@ public class LinkList {
         return dummyHead.next;
     }
 
+    /*** Important ***/
+    public node reverseEvenLengthGroups(node head) {
+        node temp = head;
+        int cnt = 1;
+        int len = len(head);
+        while (head != null) {
+            if (cnt%2 == 0) {
+                if (len < cnt && len %2 == 1)
+                    break;
+                node next = head.next;
+                head.next = revCnt(head.next, cnt);
+                head = next;
+                if (len < cnt)
+                    break;
+            } else {
+                if (len < cnt) {
+                    if (len %2 == 1)
+                        break;
+                    else {
+                        cnt++;
+                        continue;
+                    }
+                }
+                int index = cnt;
+                while (head != null && index-- > 0 && cnt !=1)
+                    head = head.next;
+            }
+
+            len -= cnt;
+            cnt++;
+        }
+        return temp;
+    }
+    public node revCnt(node head, int count) {
+        if (head == null)
+            return head;
+        node pointer = head, prev = null;
+        while (head != null && count-- > 0) {
+            node next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        pointer.next = head;
+        return prev;
+    }
 
 
 
