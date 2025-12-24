@@ -9,6 +9,7 @@ public class TriNumPat1 {
 //        p4_1(5);
 //        p5(5);
         p5_1(5);
+        // shreya
 
     }
 
